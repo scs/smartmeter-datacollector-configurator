@@ -1,44 +1,44 @@
 import logging
 
-from aiohttp import web
-
+import uvicorn
+from starlette.applications import Starlette
+from starlette.endpoints import HTTPEndpoint
+from starlette.responses import JSONResponse, PlainTextResponse
+from starlette.routing import Mount, Route
+from starlette.staticfiles import StaticFiles
 
 DEFAULT_STATIC_DIR_PATH = "../frontend/dist"
 
 logging.basicConfig(level=logging.DEBUG)
 
-routes = web.RouteTableDef()
 
-# Routes
-@routes.get('/api/config')
-async def get_config(request):
-    data = {'todo': "TODO"}
-    return web.json_response(data)
+# Endpoints
 
+class Configuration(HTTPEndpoint):
+    async def get(self, request):
+        return JSONResponse()
 
-@routes.post('/api/config')
-async def post_config(request):
-    return web.Response(text="TODO")
+    async def post(self, request):
+        return PlainTextResponse()
 
 
-@routes.post('/api/restart')
-async def post_restart(request):
-    return web.Response(text="TODO")
+async def restart(request):
+    return PlainTextResponse()
 
 
-@routes.put('/api/reset_password')
-async def put_reset_password(request):
-    return web.Response(text="TODO")
-
-routes.static('/', DEFAULT_STATIC_DIR_PATH, show_index=True)
+async def set_credentials(request):
+    return PlainTextResponse()
 
 
+routes = [
+    Route('/api/config', Configuration, methods=['GET', 'POST']),
+    Route('/api/restart', restart, methods=['POST']),
+    Route('/api/set-credentials', set_credentials, methods=['POST']),
+    Mount('/', app=StaticFiles(directory=DEFAULT_STATIC_DIR_PATH, html=True))
+]
 
-def make_app():
-    app = web.Application()
-    app.add_routes(routes)
-    return app
+app = Starlette(debug=True, routes=routes)
 
 
 if __name__ == '__main__':
-    web.run_app(make_app())
+    uvicorn.run(app, host='0.0.0.0', port=8000, log_level="debug")

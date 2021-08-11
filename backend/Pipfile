@@ -4,7 +4,8 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-aiohttp = "~=3.7"
+starlette = "~=0.16"
+uvicorn = "~=0.14"
 
 [dev-packages]
 autopep8 = "*"
