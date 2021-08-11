@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+aiohttp = "~=3.7"
+
+[dev-packages]
+autopep8 = "*"
+pylint = "*"
+
+[requires]
+python_version = "3.8"
+
+[scripts]
+format_check = "autopep8 --diff -r --aggressive smartmeter_datacollector_configurator/"
+format = "autopep8 --in-place  -r --aggressive smartmeter_datacollector_configurator/"
+lint = "pylint smartmeter_datacollector_configurator/"
