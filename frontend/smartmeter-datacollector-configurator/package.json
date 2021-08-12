@@ -40,6 +40,10 @@
     },
     "rules": {}
   },
+  "prettier": {
+    "printWidth": 120,
+    "jsxBracketSameLine:": true
+  },
   "browserslist": [
     "> 1%",
     "last 2 versions",
