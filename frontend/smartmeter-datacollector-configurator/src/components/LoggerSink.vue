@@ -18,18 +18,17 @@ export default {
   },
   data() {
     return {
-      config: {},
+      name: this.initConfig.name || "DataLogger",
     };
   },
   created() {
-    this.config["name"] = this.initConfig.name || "DataLogger";
+    this.update();
   },
-  watch: {
-    config: {
-      handler: function () {
-        this.$emit("update", this.config);
-      },
-      deep: true,
+  methods: {
+    update() {
+      this.$emit("update", {
+        name: this.name,
+      });
     },
   },
 };

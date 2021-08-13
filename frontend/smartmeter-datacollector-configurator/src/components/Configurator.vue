@@ -29,8 +29,8 @@
         </div>
         <smart-meter
           v-for="(r, r_i) in readers"
-          :key="r.__ob__.dep.id"
-          :initConfig="r"
+          :key="r.id"
+          :initConfig="r.config"
           @remove="removeReader(r_i)"
           @update="updateReader(r_i, $event)"
         />
@@ -74,26 +74,23 @@ export default {
   },
   methods: {
     addReader() {
-      this.readers.push({});
+      this.readers.push({
+        id: this.getReaderId(),
+        config: {},
+      });
+    },
+    getReaderId() {
+      if (this.readers.length == 0) {
+        return 1;
+      }
+      return Math.max(...this.readers.map((r) => r.id)) + 1;
     },
     updateReader(index, newConfig) {
-      this.readers[index] = newConfig;
+      this.readers[index].config = newConfig;
     },
     removeReader(index) {
       this.readers.splice(index, 1);
     },
-    // addLoggerSink() {
-    //   this.loggerSink = {};
-    // },
-    // removeLoggerSink() {
-    //   this.loggerSink = null;
-    // },
-    // addMqttSink() {
-    //   this.mqttSink = {};
-    // },
-    // removeMqttSink() {
-    //   this.mqttSink = null;
-    // },
     resetConfig() {
       this.loggerLevel = "WARNING";
       this.readers = [];

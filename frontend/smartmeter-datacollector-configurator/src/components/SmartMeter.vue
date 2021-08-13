@@ -1,19 +1,19 @@
 <template>
   <div class="block box">
     <p class="level title is-5">
-      <span class="level-left">{{ TYPES[config.type] }}</span>
+      <span class="level-left">{{ TYPES[type] }}</span>
       <b-icon class="level-right" type="is-danger" icon="trash" @click.native.stop="$emit('remove')" />
     </p>
     <b-field label-position="on-border" label="Type">
-      <b-select v-model="config.type" placeholder="Select a smartmeter">
-        <option v-for="(name, type) in TYPES" :value="type" :key="type">{{ name }}</option>
+      <b-select v-model="type" placeholder="Select a smartmeter" @input="update">
+        <option v-for="(name, typeKey) in TYPES" :value="typeKey" :key="typeKey">{{ name }}</option>
       </b-select>
     </b-field>
     <b-field label-position="on-border" label="Port/Device">
-      <b-input v-model="config.port" type="text" required placeholder="/dev/ttyUSB0"></b-input>
+      <b-input v-model="port" type="text" required placeholder="/dev/ttyUSB0" @input="update"></b-input>
     </b-field>
     <b-field label-position="on-border" label="Decryption Key (optional)">
-      <b-input v-model="config.key" type="text"></b-input>
+      <b-input v-model="key" type="text" @input="update"></b-input>
     </b-field>
   </div>
 </template>
@@ -28,23 +28,25 @@ export default {
   },
   data() {
     return {
-      config: {},
+      id: this.initConfig._id,
+      type: this.initConfig.type || "lge450",
+      port: this.initConfig.port || "",
+      key: this.initConfig.key || "",
     };
   },
   created() {
     this.TYPES = {
       lge450: "L+G E450",
     };
-    this.config["type"] = this.initConfig.type || "lge450";
-    this.config["port"] = this.initConfig.port || "";
-    this.config["key"] = this.initConfig.key || "";
+    this.update();
   },
-  watch: {
-    config: {
-      handler: function () {
-        this.$emit("update", this.config);
-      },
-      deep: true,
+  methods: {
+    update() {
+      this.$emit("update", {
+        type: this.type,
+        port: this.port,
+        key: this.key,
+      });
     },
   },
 };

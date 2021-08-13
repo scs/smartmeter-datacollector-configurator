@@ -5,13 +5,13 @@
       <b-icon class="level-right" type="is-danger" icon="trash" @click.native.stop="$emit('remove')" />
     </p>
     <b-field label-position="on-border" label="Host (IP/Hostname)">
-      <b-input v-model="config.host" type="text" required placeholder="localhost"></b-input>
+      <b-input v-model="host" type="text" required placeholder="localhost" @input="update"></b-input>
     </b-field>
     <b-field label-position="on-border" label="Port">
-      <b-input v-model.number="config.port" required type="number" min="1" max="65535"></b-input>
+      <b-input v-model.number="port" required type="number" min="1" max="65535" @input="update"></b-input>
     </b-field>
     <b-field>
-      <b-checkbox v-model="config.tls" :value="false">Use TLS protected connection</b-checkbox>
+      <b-checkbox v-model="tls" :value="false" @input="update">Use TLS protected connection</b-checkbox>
     </b-field>
   </div>
 </template>
@@ -26,24 +26,21 @@ export default {
   },
   data() {
     return {
-      config: {},
+      host: this.initConfig.type || "",
+      port: this.initConfig.port || "",
+      tls: "tls" in this.initConfig ? this.initConfig.tls : false,
     };
   },
   created() {
-    this.config["host"] = this.initConfig.type || "";
-    this.config["port"] = this.initConfig.port || "";
-    if ("tls" in this.initConfig) {
-      this.config["tls"] = this.initConfig["tls"];
-    } else {
-      this.config["tls"] = false;
-    }
+    this.update();
   },
-  watch: {
-    config: {
-      handler: function () {
-        this.$emit("update", this.config);
-      },
-      deep: true,
+  methods: {
+    update() {
+      this.$emit("update", {
+        host: this.host,
+        port: this.port,
+        tls: this.tls,
+      });
     },
   },
 };
