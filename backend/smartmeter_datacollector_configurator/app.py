@@ -1,6 +1,6 @@
+import dataclasses
 import logging
 
-import uvicorn
 from starlette.applications import Starlette
 from starlette.endpoints import HTTPEndpoint
 from starlette.middleware import Middleware
@@ -10,10 +10,10 @@ from starlette.responses import JSONResponse, PlainTextResponse, Response
 from starlette.routing import Mount, Route
 from starlette.staticfiles import StaticFiles
 
-import configurator
+from . import configurator
+from .dto import ConfigDto
 
-
-DEFAULT_STATIC_DIR_PATH = "../frontend/dist"
+DEFAULT_STATIC_DIR_PATH = "./static"
 DEFAULT_CONFIG_PATH = "./config.ini"
 
 logging.basicConfig(level=logging.DEBUG)
@@ -23,13 +23,13 @@ logging.basicConfig(level=logging.DEBUG)
 
 class Configuration(HTTPEndpoint):
     async def get(self, request):
-        return JSONResponse(configurator.retrieve_config(DEFAULT_CONFIG_PATH))
+        dto = configurator.retrieve_config(DEFAULT_CONFIG_PATH)
+        return JSONResponse(dataclasses.asdict(dto))
 
     async def post(self, request: Request):
-        config = await request.json()
-        # TODO validate
-        configurator.set_config(DEFAULT_CONFIG_PATH, config)
-        return Response()
+        cfg_json = await request.json()
+        configurator.write_config_from_cfg_dict(DEFAULT_CONFIG_PATH, cfg_json)
+        return Response("ok", media_type="text/plain")
 
 
 async def restart(request):

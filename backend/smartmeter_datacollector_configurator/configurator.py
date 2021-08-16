@@ -1,39 +1,53 @@
 import configparser
+import dataclasses
 import logging
-from typing import Dict, Any
+from typing import Any, Dict
 
 from . import validation
+from .dto import ConfigDto, LoggerSinkDto, MqttSinkDto, ReaderDto
 
 
 class ConfigWriteError(Exception):
     pass
 
 
-def retrieve_config(file_path: str) -> Dict[str, Any]:
+def retrieve_config(file_path: str) -> ConfigDto:
     parser = _read_config_file(file_path)
-    config = {}
+    dto = ConfigDto()
     for sec in parser.sections():
-        if sec.startswith("reader") or sec.startswith("sink"):
-            config[sec] = dict(parser.items(sec))
+        if sec.startswith("reader"):
+            reader_dict = dict(parser.items(sec))
+            dto.readers.append(ReaderDto.from_dict(reader_dict))
+        elif sec.startswith("sink"):
+            sink_dict = dict(parser.items(sec))
+            if "type" not in sink_dict:
+                logging.warning("Type not in sink config. Ignored.")
+                continue
+            if sink_dict["type"] == "mqtt":
+                dto.sinks.append(MqttSinkDto.from_dict(sink_dict))
+            elif sink_dict["type"] == "logger":
+                dto.sinks.append(LoggerSinkDto.from_dict(sink_dict))
         elif sec == "logging":
-            config[sec] = parser.get(sec, "default", fallback="WARNING")
-    return config
+            dto.logLevel = parser.get(sec, "default", fallback="WARNING")
+    return dto
 
 
-def set_config(file_path: str, config: Dict[str, Any]) -> None:
+def write_config_from_cfg_dict(file_path: str, cfg_dict: Dict[str, Any]) -> None:
     parser = configparser.ConfigParser()
-    for key, val in config.items():
-        if key.startswith("reader"):
-            parser.add_section(key)
-            parser[key] = validation.validate_reader(val)
-        elif key.startswith("sink"):
-            parser.add_section(key)
-            parser[key] = validation.validate_sink(val)
-        elif key == "logging":
-            parser.add_section(key)
-            parser[key] = {"default": validation.validate_logging(val)}
-        else:
-            raise validation.InvalidConfigError(f"Unknown section name {key}.")
+    for i, reader in enumerate(cfg_dict.get("readers", [])):
+        sec_name = f"reader{i}"
+        parser.add_section(sec_name)
+        parser[sec_name] = validation.validate_reader(reader)
+    for i, sink in enumerate(cfg_dict.get("sinks", [])):
+        sec_name = f"sink{i}"
+        parser.add_section(sec_name)
+        parser[sec_name] = validation.validate_sink(sink)
+
+    parser.add_section("logging")
+    if "logLevel" in cfg_dict:
+        parser["logging"] = {
+            "default": validation.validate_logging(cfg_dict["logLevel"])}
+
     try:
         _write_config_file(file_path, parser)
     except OSError as ex:
