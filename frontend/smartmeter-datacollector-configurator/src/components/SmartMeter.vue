@@ -28,7 +28,7 @@ export default {
   },
   data() {
     return {
-      id: this.initConfig._id,
+      id: this.initConfig.id,
       type: this.initConfig.type || "lge450",
       port: this.initConfig.port || "",
       key: this.initConfig.key || "",
