@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 starlette = "~=0.16"
 uvicorn = "~=0.14"
+pydantic = "~=1.8"
 
 [dev-packages]
 autopep8 = "*"
