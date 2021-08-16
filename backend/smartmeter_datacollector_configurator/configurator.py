@@ -1,7 +1,6 @@
 import configparser
 import logging
 
-from . import validation
 from .dto import ConfigDto, LoggerSinkDto, MqttSinkDto, ReaderDto, SinkType
 
 
@@ -23,9 +22,9 @@ def retrieve_config(file_path: str) -> ConfigDto:
                 logging.warning("Type of sink not defined. Ignored.")
                 continue
             if sink_dict["type"] == SinkType.MQTT:
-                dto.sinks.append(MqttSinkDto.parse_obj(sink_dict))
+                dto.mqttSink = MqttSinkDto.parse_obj(sink_dict)
             elif sink_dict["type"] == SinkType.LOGGER:
-                dto.sinks.append(LoggerSinkDto.parse_obj(sink_dict))
+                dto.loggerSink = LoggerSinkDto.parse_obj(sink_dict)
         elif sec == "logging":
             dto.logLevel = parser.get(sec, "default", fallback="WARNING")
     return dto
@@ -36,15 +35,18 @@ def write_config_from_dto(file_path: str, config: ConfigDto) -> None:
     for i, reader in enumerate(config.readers):
         sec_name = f"reader{i}"
         parser.add_section(sec_name)
-        parser[sec_name] = validation.validate_reader(reader.dict())
-    for i, sink in enumerate(config.sinks):
+        parser[sec_name] = reader.dict()
+    sinks = (config.mqttSink, config.loggerSink)
+    for i, sink in enumerate(sinks):
+        if not sink:
+            continue
         sec_name = f"sink{i}"
         parser.add_section(sec_name)
-        parser[sec_name] = validation.validate_sink(sink.dict())
+        parser[sec_name] = sink.dict()
 
     parser.add_section("logging")
     parser["logging"] = {
-        "default": validation.validate_logging(config.logLevel)
+        "default": config.logLevel
     }
 
     try:

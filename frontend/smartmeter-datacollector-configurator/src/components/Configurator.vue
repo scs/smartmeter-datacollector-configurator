@@ -169,23 +169,15 @@ export default {
       this.readers = cfg["readers"].map((r, index) => {
         return { id: index, config: r };
       });
-      let sinks = cfg["sinks"].filter((s) => s["type"] == "logger");
-      this.loggerSink = sinks.length > 0 ? sinks[0] : null;
-      sinks = cfg["sinks"].filter((s) => s["type"] == "mqtt");
-      this.mqttSink = sinks.length > 0 ? sinks[0] : null;
+      this.mqttSink = cfg["mqttSink"] || null;
+      this.loggerSink = cfg["loggerSink"] || null;
     },
     packConfig() {
-      let sinks = [];
-      if (this.loggerSink) {
-        sinks.push(this.loggerSink);
-      }
-      if (this.mqttSink) {
-        sinks.push(this.mqttSink);
-      }
       return {
         logLevel: this.loggerLevel,
         readers: this.readers.map((r) => r.config),
-        sinks: sinks,
+        mqttSink: this.mqttSink,
+        loggerSink: this.loggerSink,
       };
     },
   },
