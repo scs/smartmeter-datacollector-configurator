@@ -3,7 +3,7 @@ from typing import Dict
 
 
 READER_TYPES = ["lge450"]
-SINK_TYPES = ["logger", "mqtt"]
+LOGGER_LEVEL = ["DEBUG", "INFO", "WARNING", "ERROR", "FATAL", "CRITICAL"]
 
 
 class InvalidConfigError(Exception):
@@ -38,15 +38,17 @@ def validate_reader(config: Dict[str, str]) -> Dict[str, str]:
 def validate_sink(config: Dict[str, str]) -> Dict[str, str]:
     if "type" not in config:
         raise InvalidConfigError("Missing sink type.")
-    if config["type"] not in SINK_TYPES:
-        raise InvalidConfigError(f"Invalid sink type {config['type']}.")
+    if config["type"] == "logger":
+        return _validate_logger_sink(config)
+    if config["type"] == "mqtt":
+        return _validate_mqtt_sink(config)
 
-    return locals()[f"_validate_{config['type']}_sink"](config)
+    raise InvalidConfigError(f"Invalid sink type {config['type']}.")
 
 
 def validate_logging(level: str) -> str:
-    name = logging.getLevelName(level.strip().upper())
-    if not isinstance(name, str):
+    name = level.strip().upper()
+    if name not in LOGGER_LEVEL:
         raise InvalidConfigError(f"Invalid logging level '{level}'.")
     return name
 
