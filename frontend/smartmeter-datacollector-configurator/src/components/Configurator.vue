@@ -56,6 +56,8 @@
 </template>
 
 <script>
+import axios from "axios";
+import { getBaseHostUrl } from "../utils";
 import LoggerSink from "./LoggerSink.vue";
 import MqttSink from "./MqttSink.vue";
 import SmartMeter from "./SmartMeter.vue";
@@ -126,6 +128,65 @@ export default {
         hasIcon: true,
         onConfirm: this.deployConfig,
       });
+    },
+    loadConfig() {
+      axios
+        .get(`${getBaseHostUrl()}/config`, {
+          timeout: 3000,
+          responseType: "json",
+        })
+        .then((response) => {
+          console.log(response.data);
+          this.extractConfig(response.data);
+        })
+        .catch((error) => {
+          this.$buefy.dialog.alert({
+            title: "Loading site-config failed",
+            message: error.message,
+            type: "is-danger",
+          });
+          console.log(error.request);
+          console.log(error.response);
+        });
+    },
+    deployConfig() {
+      const configJson = JSON.stringify(this.packConfig());
+      console.log(configJson);
+      axios
+        .post(`${getBaseHostUrl()}/config`, configJson, {
+          timeout: 4000,
+        })
+        .catch((error) => {
+          this.$buefy.dialog.alert({
+            title: "Deploying site-config failed",
+            message: error.message,
+            type: "is-danger",
+          });
+        });
+    },
+    extractConfig(cfg) {
+      this.loggerLevel = cfg["logLevel"] || "WARNING";
+      this.readers = cfg["readers"].map((r, index) => {
+        return { id: index, config: r };
+      });
+      let sinks = cfg["sinks"].filter((s) => s["type"] == "logger");
+      this.loggerSink = sinks.length > 0 ? sinks[0] : null;
+      sinks = cfg["sinks"].filter((s) => s["type"] == "mqtt");
+      this.mqttSink = sinks.length > 0 ? sinks[0] : null;
+    },
+    packConfig() {
+      let sinks = [];
+      if (this.loggerSink) {
+        sinks.push(this.loggerSink);
+      }
+      if (this.mqttSink) {
+        sinks.push(this.mqttSink);
+      }
+      return {
+        logLevel: this.loggerLevel,
+        readers: this.readers.map((r) => r.config),
+        sinks: sinks,
+      };
     },
   },
 };
