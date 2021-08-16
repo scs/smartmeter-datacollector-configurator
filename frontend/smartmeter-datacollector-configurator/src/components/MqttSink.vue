@@ -37,6 +37,7 @@ export default {
   methods: {
     update() {
       this.$emit("update", {
+        type: "mqtt",
         host: this.host,
         port: this.port,
         tls: this.tls,

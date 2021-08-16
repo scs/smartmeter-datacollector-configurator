@@ -27,6 +27,7 @@ export default {
   methods: {
     update() {
       this.$emit("update", {
+        type: "logger",
         name: this.name,
       });
     },
