@@ -3,6 +3,8 @@ import logging
 import uvicorn
 from starlette.applications import Starlette
 from starlette.endpoints import HTTPEndpoint
+from starlette.middleware import Middleware
+from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
 from starlette.responses import JSONResponse, PlainTextResponse, Response
 from starlette.routing import Mount, Route
@@ -45,8 +47,8 @@ routes = [
     Mount('/', app=StaticFiles(directory=DEFAULT_STATIC_DIR_PATH, html=True))
 ]
 
-app = Starlette(debug=True, routes=routes)
+middleware = [
+    Middleware(CORSMiddleware, allow_origins=['*'])
+]
 
-
-if __name__ == '__main__':
-    uvicorn.run(app, host='0.0.0.0', port=8000, log_level="debug")
+app = Starlette(debug=True, routes=routes, middleware=middleware)
