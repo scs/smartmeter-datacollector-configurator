@@ -1,60 +1,38 @@
-from dataclasses import dataclass, field
-from typing import Any, Dict, List, Union
+from abc import ABC
+from enum import Enum
+from typing import List, Optional, Union
+
+from pydantic import BaseModel
 
 
-@dataclass
-class ReaderDto:
-    type: str
+class ReaderType(str, Enum):
+    LGE450 = "lge450"
+
+
+class SinkType(str, Enum):
+    MQTT = "mqtt"
+    LOGGER = "logger"
+
+
+class ReaderDto(BaseModel):
+    type: ReaderType
     port: str
-    key: str
-
-    @classmethod
-    def from_dict(cls, reader_dict: Dict[str, Any]) -> "ReaderDto":
-        return ReaderDto(
-            type=reader_dict.get("type", ""),
-            port=reader_dict.get("port", ""),
-            key=reader_dict.get("key", "")
-        )
+    key: Optional[str]
 
 
-@dataclass
-class MqttSinkDto:
+class MqttSinkDto(BaseModel):
+    type = SinkType.MQTT
     host: str
-    port: int
-    tls: bool
-    type: str = "mqtt"
-
-    @classmethod
-    def from_dict(cls, sink_dict: Dict[str, Any]) -> "MqttSinkDto":
-        return MqttSinkDto(
-            host=sink_dict.get("host", ""),
-            port=int(sink_dict.get("port", 0)),
-            tls=bool(sink_dict.get("tls", False))
-        )
+    port: int = 1883
+    tls: bool = False
 
 
-@dataclass
-class LoggerSinkDto:
-    name: str
-    type: str = "logger"
-
-    @classmethod
-    def from_dict(cls, sink_dict: Dict[str, Any]) -> "LoggerSinkDto":
-        return LoggerSinkDto(
-            name=sink_dict.get("name", "")
-        )
+class LoggerSinkDto(BaseModel):
+    type = SinkType.LOGGER
+    name: str = "DataLogger"
 
 
-@dataclass
-class ConfigDto:
-    logLevel: str = ""
-    readers: List[ReaderDto] = field(default_factory=list)
-    sinks: List[Union[MqttSinkDto, LoggerSinkDto]] = field(default_factory=list)
-
-    @classmethod
-    def from_dict(cls, cfg_dict: Dict) -> "ConfigDto":
-        return ConfigDto(
-            logLevel=cfg_dict.get("logLevel", ""),
-            readers=cfg_dict.get("readers", []),
-            sinks=cfg_dict.get("sinks", [])
-        )
+class ConfigDto(BaseModel):
+    logLevel: str = "WARNING"
+    readers: List[ReaderDto] = []
+    sinks: List[Union[MqttSinkDto, LoggerSinkDto]] = []

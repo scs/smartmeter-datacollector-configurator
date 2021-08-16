@@ -1,10 +1,8 @@
 import configparser
-import dataclasses
 import logging
-from typing import Any, Dict
 
 from . import validation
-from .dto import ConfigDto, LoggerSinkDto, MqttSinkDto, ReaderDto
+from .dto import ConfigDto, LoggerSinkDto, MqttSinkDto, ReaderDto, SinkType
 
 
 class ConfigWriteError(Exception):
@@ -16,37 +14,38 @@ def retrieve_config(file_path: str) -> ConfigDto:
     dto = ConfigDto()
     for sec in parser.sections():
         if sec.startswith("reader"):
-            reader_dict = dict(parser.items(sec))
-            dto.readers.append(ReaderDto.from_dict(reader_dict))
+            dto.readers.append(ReaderDto.parse_obj(
+                dict(parser.items(sec))
+            ))
         elif sec.startswith("sink"):
             sink_dict = dict(parser.items(sec))
             if "type" not in sink_dict:
-                logging.warning("Type not in sink config. Ignored.")
+                logging.warning("Type of sink not defined. Ignored.")
                 continue
-            if sink_dict["type"] == "mqtt":
-                dto.sinks.append(MqttSinkDto.from_dict(sink_dict))
-            elif sink_dict["type"] == "logger":
-                dto.sinks.append(LoggerSinkDto.from_dict(sink_dict))
+            if sink_dict["type"] == SinkType.MQTT:
+                dto.sinks.append(MqttSinkDto.parse_obj(sink_dict))
+            elif sink_dict["type"] == SinkType.LOGGER:
+                dto.sinks.append(LoggerSinkDto.parse_obj(sink_dict))
         elif sec == "logging":
             dto.logLevel = parser.get(sec, "default", fallback="WARNING")
     return dto
 
 
-def write_config_from_cfg_dict(file_path: str, cfg_dict: Dict[str, Any]) -> None:
+def write_config_from_dto(file_path: str, config: ConfigDto) -> None:
     parser = configparser.ConfigParser()
-    for i, reader in enumerate(cfg_dict.get("readers", [])):
+    for i, reader in enumerate(config.readers):
         sec_name = f"reader{i}"
         parser.add_section(sec_name)
-        parser[sec_name] = validation.validate_reader(reader)
-    for i, sink in enumerate(cfg_dict.get("sinks", [])):
+        parser[sec_name] = validation.validate_reader(reader.dict())
+    for i, sink in enumerate(config.sinks):
         sec_name = f"sink{i}"
         parser.add_section(sec_name)
-        parser[sec_name] = validation.validate_sink(sink)
+        parser[sec_name] = validation.validate_sink(sink.dict())
 
     parser.add_section("logging")
-    if "logLevel" in cfg_dict:
-        parser["logging"] = {
-            "default": validation.validate_logging(cfg_dict["logLevel"])}
+    parser["logging"] = {
+        "default": validation.validate_logging(config.logLevel)
+    }
 
     try:
         _write_config_file(file_path, parser)

@@ -1,8 +1,9 @@
-import dataclasses
 import logging
 
+from pydantic.error_wrappers import ValidationError
 from starlette.applications import Starlette
 from starlette.endpoints import HTTPEndpoint
+from starlette.exceptions import HTTPException
 from starlette.middleware import Middleware
 from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
@@ -24,11 +25,21 @@ logging.basicConfig(level=logging.DEBUG)
 class Configuration(HTTPEndpoint):
     async def get(self, request):
         dto = configurator.retrieve_config(DEFAULT_CONFIG_PATH)
-        return JSONResponse(dataclasses.asdict(dto))
+        return JSONResponse(dto.json())
 
     async def post(self, request: Request):
-        cfg_json = await request.json()
-        configurator.write_config_from_cfg_dict(DEFAULT_CONFIG_PATH, cfg_json)
+        try:
+            config = ConfigDto.parse_obj(await request.json())
+        except ValidationError as e:
+            logging.error(e)
+            raise HTTPException(status_code=400, detail=str(e))
+        print(config)
+        try:
+            configurator.write_config_from_dto(DEFAULT_CONFIG_PATH, config)
+        except Exception as e:
+            logging.error(e)
+            raise HTTPException(status_code=400, detail=str(e))
+
         return Response("ok", media_type="text/plain")
 
 
