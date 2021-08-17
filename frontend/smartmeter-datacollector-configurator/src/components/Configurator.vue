@@ -2,8 +2,12 @@
   <div>
     <div class="level">
       <div class="level-left">
-        <b-button class="level-item" icon-left="upload" @click="confirmLoad">Load Configuration</b-button>
-        <b-button class="level-item" icon-left="download" @click="confirmDeploy">Deploy Configuration</b-button>
+        <b-button class="level-item" icon-left="upload" @click="checkCredentials(confirmLoad)"
+          >Load Configuration</b-button
+        >
+        <b-button class="level-item" icon-left="download" @click="checkCredentials(confirmDeploy)"
+          >Deploy Configuration</b-button
+        >
       </div>
       <div class="level-right">
         <b-button class="level-item is-danger" icon-left="trash" @click="confirmDiscard"
@@ -69,10 +73,12 @@ export default {
       readers: [],
       loggerSink: null,
       mqttSink: null,
+      credentials: null,
     };
   },
   created() {
     this.LOGGER_LEVEL = ["DEBUG", "INFO", "WARNING", "ERROR", "FATAL", "CRITICAL"];
+    this.USERNAME = "admin";
   },
   methods: {
     addReader() {
@@ -92,6 +98,25 @@ export default {
     },
     removeReader(index) {
       this.readers.splice(index, 1);
+    },
+    checkCredentials(action) {
+      if (!this.credentials) {
+        this.$buefy.dialog.prompt({
+          message: "Please enter password.",
+          inputAttrs: {
+            placeholder: "Password",
+            type: "password",
+            maxlength: 30,
+          },
+          trapFocus: true,
+          onConfirm: (value) => {
+            this.credentials = value;
+            action();
+          },
+        });
+      } else {
+        action();
+      }
     },
     resetConfig() {
       this.loggerLevel = "WARNING";
