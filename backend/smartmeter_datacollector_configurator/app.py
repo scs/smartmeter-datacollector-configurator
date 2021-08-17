@@ -9,7 +9,7 @@ from starlette.middleware import Middleware
 from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
-from starlette.responses import JSONResponse, PlainTextResponse, Response
+from starlette.responses import JSONResponse, PlainTextResponse
 from starlette.routing import Mount, Route
 from starlette.staticfiles import StaticFiles
 
@@ -19,10 +19,10 @@ from .dto import ConfigDto
 
 DEFAULT_STATIC_DIR_PATH = "./static"
 DEFAULT_CONFIG_PATH = "./config.ini"
+LOGGER = logging.getLogger("uvicorn.error")
 
 
 # Endpoints
-
 class Configuration(HTTPEndpoint):
     @requires("authenticated")
     async def get(self, request):
@@ -33,16 +33,17 @@ class Configuration(HTTPEndpoint):
     async def post(self, request: Request):
         try:
             config = ConfigDto.parse_obj(await request.json())
+            LOGGER.debug("Config updated: %s", config)
         except ValidationError as e:
-            logging.error(e)
+            LOGGER.warning("Validation failure: '%s'", e)
             raise HTTPException(status_code=400, detail=str(e))
         try:
             configurator.write_config_from_dto(DEFAULT_CONFIG_PATH, config)
-        except Exception as e:
-            logging.error(e)
+        except configurator.ConfigWriteError as e:
+            LOGGER.warning("Config write failed: '%s'", e)
             raise HTTPException(status_code=400, detail=str(e))
 
-        return Response("ok", media_type="text/plain")
+        return PlainTextResponse()
 
 
 @requires("authenticated")

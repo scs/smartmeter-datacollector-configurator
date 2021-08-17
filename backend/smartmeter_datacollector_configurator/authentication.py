@@ -6,6 +6,8 @@ from starlette.authentication import (AuthCredentials, AuthenticationBackend,
                                       AuthenticationError, SimpleUser)
 from starlette.requests import HTTPConnection
 
+LOGGER = logging.getLogger("uvicorn.error")
+
 
 class SetPasswordError(Exception):
     pass
@@ -21,9 +23,9 @@ class AuthManager:
 
     def check_credentials(self, username: str, password: str) -> bool:
         if username == self.USERNAME and password == self._password:
-            logging.debug("User %s successfully authenticated.", username)
+            LOGGER.debug("User %s successfully authenticated.", username)
             return True
-        logging.warning("User %s failed to authenticate.", username)
+        LOGGER.warning("User %s failed to authenticate.", username)
         return False
 
     def set_new_password(self, new_password: str) -> None:
@@ -39,7 +41,7 @@ class AuthManager:
                     raise ValueError("Password file is empty.")
                 return pwd
         except (OSError, ValueError) as e:
-            logging.warning(f"Unable to read password file. '{e}' \n\tGenerating new file with default password.")
+            LOGGER.warning(f"Unable to read password file. '{e}' \n\tGenerating new file with default password.")
             AuthManager._write_pwd_file(AuthManager.DEFAULT_PASSWORD, file_path)
             return AuthManager.DEFAULT_PASSWORD
 
@@ -49,7 +51,7 @@ class AuthManager:
             with open(file_path, "w") as file:
                 file.write(password.strip())
         except OSError as e:
-            logging.error(f"Unable to write password file. '{e}'")
+            LOGGER.error(f"Unable to write password file. '{e}'")
             raise SetPasswordError(e) from e
 
 

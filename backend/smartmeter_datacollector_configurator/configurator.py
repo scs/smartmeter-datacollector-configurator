@@ -3,6 +3,8 @@ import logging
 
 from .dto import ConfigDto, LoggerSinkDto, MqttSinkDto, ReaderDto, SinkType
 
+LOGGER = logging.getLogger("uvicorn.error")
+
 
 class ConfigWriteError(Exception):
     pass
@@ -19,7 +21,7 @@ def retrieve_config(file_path: str) -> ConfigDto:
         elif sec.startswith("sink"):
             sink_dict = dict(parser.items(sec))
             if "type" not in sink_dict:
-                logging.warning("Type of sink not defined. Ignored.")
+                LOGGER.warning("Type of sink not defined. Ignored.")
                 continue
             if sink_dict["type"] == SinkType.MQTT:
                 dto.mqttSink = MqttSinkDto.parse_obj(sink_dict)
@@ -52,7 +54,7 @@ def write_config_from_dto(file_path: str, config: ConfigDto) -> None:
     try:
         _write_config_file(file_path, parser)
     except OSError as ex:
-        logging.error("Unable to write config to file. '%s'", ex)
+        LOGGER.error("Unable to write config to file. '%s'", ex)
         raise ConfigWriteError(ex) from ex
 
 
@@ -60,9 +62,9 @@ def _read_config_file(file_path: str) -> configparser.ConfigParser:
     parser = configparser.ConfigParser()
     read_files = parser.read(file_path)
     if read_files:
-        logging.debug("Read config from file '%s'", read_files[0])
+        LOGGER.debug("Read config from file '%s'", read_files[0])
     else:
-        logging.warning("Unable to read config file. Returning empty config.")
+        LOGGER.warning("Unable to read config file. Returning empty config.")
     return parser
 
 

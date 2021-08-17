@@ -1,9 +1,8 @@
 from enum import Enum
-from typing import List, Optional, Union
+from typing import List, Optional
 
 from pydantic import BaseModel as PydanticBaseModel
 from pydantic.class_validators import validator
-from pydantic.networks import AnyUrl
 
 
 LOGGER_LEVEL = ["DEBUG", "INFO", "WARNING", "ERROR", "FATAL", "CRITICAL"]
