@@ -118,6 +118,12 @@ export default {
         action();
       }
     },
+    getAuthentication() {
+      return {
+        username: this.USERNAME,
+        password: this.credentials || "",
+      };
+    },
     resetConfig() {
       this.loggerLevel = "WARNING";
       this.readers = [];
@@ -159,6 +165,7 @@ export default {
         .get(`${getBaseHostUrl()}/config`, {
           timeout: 3000,
           responseType: "json",
+          auth: this.getAuthentication(),
         })
         .then((response) => {
           console.log(response.data);
@@ -180,6 +187,7 @@ export default {
       axios
         .post(`${getBaseHostUrl()}/config`, configJson, {
           timeout: 4000,
+          auth: this.getAuthentication(),
         })
         .catch((error) => {
           this.$buefy.dialog.alert({
