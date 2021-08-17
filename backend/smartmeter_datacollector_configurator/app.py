@@ -64,7 +64,7 @@ routes = [
 ]
 
 middleware = [
-    Middleware(CORSMiddleware, allow_origins=['*']),
+    Middleware(CORSMiddleware, allow_origins=['*'], allow_headers=["Authorization"]),
     Middleware(AuthenticationMiddleware, backend=BasicAuthBackend())
 ]
 
