@@ -143,3 +143,4 @@ cython_debug/
 
 # Other
 config.ini
+password.txt
