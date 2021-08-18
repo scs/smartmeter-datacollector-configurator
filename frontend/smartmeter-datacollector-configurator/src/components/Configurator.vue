@@ -160,6 +160,18 @@ export default {
         onConfirm: this.deployConfig,
       });
     },
+    parseError(error) {
+      if (error.response) {
+        if (error.response.status === 403) {
+          this.credentials = null;
+          return "Authentication failed.";
+        }
+        return error.response.data || error.response.statusText;
+      } else {
+        console.log(error.request);
+        return "Request failed.";
+      }
+    },
     loadConfig() {
       axios
         .get(`${getBaseHostUrl()}/config`, {
@@ -168,32 +180,40 @@ export default {
           auth: this.getAuthentication(),
         })
         .then((response) => {
-          console.log(response.data);
           this.extractConfig(response.data);
         })
         .catch((error) => {
-          this.$buefy.dialog.alert({
-            title: "Loading site-config failed",
-            message: error.message,
+          const message = this.parseError(error);
+          this.$buefy.toast.open({
+            message: message,
             type: "is-danger",
+            position: "is-top",
+            duration: 4000,
           });
-          console.log(error.request);
-          console.log(error.response);
         });
     },
     deployConfig() {
       const configJson = JSON.stringify(this.packConfig());
-      console.log(configJson);
       axios
         .post(`${getBaseHostUrl()}/config`, configJson, {
           timeout: 4000,
           auth: this.getAuthentication(),
         })
+        .then(() => {
+          this.$buefy.toast.open({
+            message: "Configuration successfully deployed.",
+            type: "is-success",
+            position: "is-top",
+            duration: 4000,
+          });
+        })
         .catch((error) => {
-          this.$buefy.dialog.alert({
-            title: "Deploying site-config failed",
-            message: error.message,
+          const message = this.parseError(error);
+          this.$buefy.toast.open({
+            message: message,
             type: "is-danger",
+            position: "is-top",
+            duration: 4000,
           });
         });
     },
