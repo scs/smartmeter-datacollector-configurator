@@ -33,15 +33,16 @@ class Configuration(HTTPEndpoint):
     async def post(self, request: Request):
         try:
             config = ConfigDto.parse_obj(await request.json())
-            LOGGER.debug("Config updated: %s", config)
+            LOGGER.info("Configuration updated.")
+            LOGGER.debug("Config: %s", config)
         except ValidationError as e:
             LOGGER.warning("Validation failure: '%s'", e)
-            raise HTTPException(status_code=400, detail=str(e))
+            raise HTTPException(status_code=400, detail="Validation of configuration failed.")
         try:
             configurator.write_config_from_dto(DEFAULT_CONFIG_PATH, config)
         except configurator.ConfigWriteError as e:
             LOGGER.warning("Config write failed: '%s'", e)
-            raise HTTPException(status_code=400, detail=str(e))
+            raise HTTPException(status_code=500, detail="Failed to write configuration.")
 
         return PlainTextResponse()
 
