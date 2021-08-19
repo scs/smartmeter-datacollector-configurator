@@ -8,7 +8,12 @@
         <b-button class="level-item" icon-left="download" @click="checkCredentials(confirmDeploy)"
           >Deploy Configuration</b-button
         >
-        <b-button class="level-item" icon-left="key" @click="changePasswordModal">Change Password</b-button>
+        <b-button
+          class="level-item"
+          icon-left="key"
+          @click="checkCredentials(changePasswordModal, 'Please enter current password.')"
+          >Change Password</b-button
+        >
       </div>
       <div class="level-right">
         <b-button class="level-item is-danger" icon-left="trash" @click="confirmDiscard"
@@ -101,10 +106,10 @@ export default {
     removeReader(index) {
       this.readers.splice(index, 1);
     },
-    checkCredentials(action) {
+    checkCredentials(action, message = null) {
       if (!this.credentials) {
         this.$buefy.dialog.prompt({
-          message: "Please enter password.",
+          message: message || "Please enter password.",
           inputAttrs: {
             placeholder: "Password",
             type: "password",
@@ -265,7 +270,8 @@ export default {
             position: "is-top",
             duration: 4000,
           });
-        });
+        })
+        .then(() => (this.credentials = null));
     },
   },
 };
