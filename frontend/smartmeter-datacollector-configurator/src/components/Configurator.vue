@@ -8,6 +8,7 @@
         <b-button class="level-item" icon-left="download" @click="checkCredentials(confirmDeploy)"
           >Deploy Configuration</b-button
         >
+        <b-button class="level-item" icon-left="key" @click="changePasswordModal">Change Password</b-button>
       </div>
       <div class="level-right">
         <b-button class="level-item is-danger" icon-left="trash" @click="confirmDiscard"
@@ -65,6 +66,7 @@ import { getBaseHostUrl } from "../utils";
 import LoggerSink from "./LoggerSink.vue";
 import MqttSink from "./MqttSink.vue";
 import SmartMeter from "./SmartMeter.vue";
+import PasswordModal from "./PasswordModal.vue";
 export default {
   components: { SmartMeter, LoggerSink, MqttSink },
   data() {
@@ -232,6 +234,38 @@ export default {
         mqttSink: this.mqttSink,
         loggerSink: this.loggerSink,
       };
+    },
+    changePasswordModal() {
+      this.$buefy.modal.open({
+        parent: this,
+        component: PasswordModal,
+        hasModalCard: true,
+        events: { submit: this.changePassword },
+      });
+    },
+    changePassword(newPassword) {
+      axios
+        .post(`${getBaseHostUrl()}/credentials`, newPassword, {
+          timeout: 4000,
+          auth: this.getAuthentication(),
+        })
+        .then(() => {
+          this.$buefy.toast.open({
+            message: "Password successfully changed.",
+            type: "is-success",
+            position: "is-top",
+            duration: 4000,
+          });
+        })
+        .catch((error) => {
+          const message = this.parseError(error);
+          this.$buefy.toast.open({
+            message: message,
+            type: "is-danger",
+            position: "is-top",
+            duration: 4000,
+          });
+        });
     },
   },
 };
