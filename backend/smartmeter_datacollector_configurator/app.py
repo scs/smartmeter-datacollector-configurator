@@ -14,8 +14,8 @@ from starlette.routing import Mount, Route
 from starlette.staticfiles import StaticFiles
 
 from . import configurator
-from .authentication import BasicAuthBackend
-from .dto import ConfigDto
+from .authentication import BasicAuthBackend, SetPasswordError, auth_manager
+from .dto import ConfigDto, CredentialsDto
 
 DEFAULT_STATIC_DIR_PATH = "./static"
 DEFAULT_CONFIG_PATH = "./config.ini"
@@ -53,19 +53,34 @@ async def restart(request):
 
 
 @requires("authenticated")
-async def set_credentials(request):
+async def set_credentials(request: Request):
+    new_password = await request.json()
+    try:
+        credential_dto = CredentialsDto(password=new_password)
+    except ValidationError as e:
+        LOGGER.warning("Credential validation error: %s", e)
+        raise HTTPException(status_code=400, detail="New credentials are invalid.")
+    try:
+        auth_manager.set_new_credentials(credential_dto)
+    except SetPasswordError as e:
+        LOGGER.warning("Credential write error: '%s'", e)
+        raise HTTPException(status_code=500, detail="Failed to write new credentials.")
+    LOGGER.debug("New credentials are successfully set.")
     return PlainTextResponse()
 
 
 routes = [
     Route('/api/config', Configuration, methods=['GET', 'POST']),
     Route('/api/restart', restart, methods=['POST']),
-    Route('/api/set-credentials', set_credentials, methods=['POST']),
+    Route('/api/credentials', set_credentials, methods=['POST']),
     Mount('/', app=StaticFiles(directory=DEFAULT_STATIC_DIR_PATH, html=True))
 ]
 
 middleware = [
-    Middleware(CORSMiddleware, allow_origins=['*'], allow_headers=["Authorization"]),
+    Middleware(CORSMiddleware,
+               allow_origins=['*'],
+               allow_headers=["Authorization"],
+               allow_methods=["GET", "POST"]),
     Middleware(AuthenticationMiddleware, backend=BasicAuthBackend())
 ]
 

@@ -6,6 +6,8 @@ from starlette.authentication import (AuthCredentials, AuthenticationBackend,
                                       AuthenticationError, SimpleUser)
 from starlette.requests import HTTPConnection
 
+from .dto import CredentialsDto
+
 LOGGER = logging.getLogger("uvicorn.error")
 
 
@@ -28,9 +30,9 @@ class AuthManager:
         LOGGER.warning("User %s failed to authenticate.", username)
         return False
 
-    def set_new_password(self, new_password: str) -> None:
-        self._password = new_password
-        self._write_pwd_file(new_password, self.PASSWORD_FILE_PATH)
+    def set_new_credentials(self, new_credentials: CredentialsDto) -> None:
+        self._password = new_credentials.password
+        self._write_pwd_file(self._password, self.PASSWORD_FILE_PATH)
 
     @staticmethod
     def _read_pwd_file(file_path: str) -> str:

@@ -77,3 +77,14 @@ class ConfigDto(BaseModel):
         if lvl not in LOGGER_LEVEL:
             raise ValueError(f"Invalid logging level '{lvl}'. Must be one of {LOGGER_LEVEL}")
         return lvl
+
+
+class CredentialsDto(BaseModel):
+    password: str
+
+    @validator("password")
+    def password_valid(cls, v: str):
+        pwd = v.strip()
+        if len(pwd) < 8 or len(pwd) > 30:
+            raise ValueError("Invalid password length.")
+        return pwd
