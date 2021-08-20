@@ -54,10 +54,10 @@ async def restart(request):
 
 @requires("authenticated")
 async def set_credentials(request: Request):
-    new_password = await request.json()
     try:
+        new_password = (await request.body()).decode("utf-8")
         credential_dto = CredentialsDto(password=new_password)
-    except ValidationError as e:
+    except (UnicodeDecodeError, ValidationError) as e:
         LOGGER.warning("Credential validation error: %s", e)
         raise HTTPException(status_code=400, detail="New credentials are invalid.")
     try:
