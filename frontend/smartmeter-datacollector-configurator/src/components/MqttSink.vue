@@ -27,7 +27,7 @@ export default {
   data() {
     return {
       host: this.initConfig.host || "",
-      port: this.initConfig.port || "",
+      port: this.initConfig.port || 1883,
       tls: "tls" in this.initConfig ? this.initConfig.tls : false,
     };
   },
