@@ -26,7 +26,7 @@ export default {
   },
   data() {
     return {
-      host: this.initConfig.type || "",
+      host: this.initConfig.host || "",
       port: this.initConfig.port || "",
       tls: "tls" in this.initConfig ? this.initConfig.tls : false,
     };
