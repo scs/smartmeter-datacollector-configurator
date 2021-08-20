@@ -4,7 +4,6 @@ from typing import List, Optional
 from pydantic import BaseModel as PydanticBaseModel
 from pydantic.class_validators import validator
 
-
 LOGGER_LEVEL = ["DEBUG", "INFO", "WARNING", "ERROR", "FATAL", "CRITICAL"]
 
 
@@ -40,6 +39,9 @@ class MqttSinkDto(BaseModel):
     host: str
     port: int = 1883
     tls: bool = False
+    ca_cert: Optional[str]
+    username: Optional[str]
+    password: Optional[str]
 
     @validator("host")
     def host_not_empty(cls, v: str):
