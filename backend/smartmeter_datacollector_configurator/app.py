@@ -33,8 +33,6 @@ class Configuration(HTTPEndpoint):
     async def post(self, request: Request):
         try:
             config = ConfigDto.parse_obj(await request.json())
-            LOGGER.info("Configuration updated.")
-            LOGGER.debug("Config: %s", config)
         except ValidationError as e:
             LOGGER.warning("Validation failure: '%s'", e)
             raise HTTPException(status_code=400, detail="Validation of configuration failed.")
@@ -44,6 +42,8 @@ class Configuration(HTTPEndpoint):
             LOGGER.warning("Config write failed: '%s'", e)
             raise HTTPException(status_code=500, detail="Failed to write configuration.")
 
+        LOGGER.info("Configuration updated.")
+        LOGGER.debug("Config: %s", config)
         return PlainTextResponse()
 
 
