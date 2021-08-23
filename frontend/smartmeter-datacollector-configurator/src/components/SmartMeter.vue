@@ -10,10 +10,10 @@
       </b-select>
     </b-field>
     <b-field label-position="on-border" label="Port/Device">
-      <b-input v-model="port" type="text" required placeholder="/dev/ttyUSB0" @input="update"></b-input>
+      <b-input v-model="port" type="text" required placeholder="/dev/ttyUSB0" lazy @input="update"></b-input>
     </b-field>
     <b-field label-position="on-border" label="Decryption Key (optional)">
-      <b-input v-model="key" type="text" @input="update"></b-input>
+      <b-input v-model="key" type="text" lazy @input="update"></b-input>
     </b-field>
   </div>
 </template>
@@ -45,7 +45,7 @@ export default {
       this.$emit("update", {
         type: this.type,
         port: this.port,
-        key: this.key,
+        key: this.key || null,
       });
     },
   },
