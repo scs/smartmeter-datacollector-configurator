@@ -25,6 +25,11 @@ def retrieve_config(file_path: str) -> ConfigDto:
                 continue
             if sink_dict["type"] == SinkType.MQTT:
                 dto.mqttSink = MqttSinkDto.parse_obj(sink_dict)
+                if "ca_file_path" in sink_dict:
+                    try:
+                        dto.mqttSink.ca_cert = _read_txt_file("./ca.crt")
+                    except OSError as ex:
+                        LOGGER.warning("Unable to read CA certificate file. '%s'", str(ex))
             elif sink_dict["type"] == SinkType.LOGGER:
                 dto.loggerSink = LoggerSinkDto.parse_obj(sink_dict)
         elif sec == "logging":
@@ -44,7 +49,18 @@ def write_config_from_dto(file_path: str, config: ConfigDto) -> None:
             continue
         sec_name = f"sink{i}"
         parser.add_section(sec_name)
-        parser[sec_name] = sink.dict()
+        sec_dict = sink.dict(exclude={"ca_cert"}, exclude_none=True)
+        print(sec_dict)
+        parser[sec_name] = sec_dict
+
+        # Handle CA certificate file
+        if isinstance(sink, MqttSinkDto) and sink.ca_cert:
+            try:
+                _write_txt_file("./ca.crt", sink.ca_cert)
+            except OSError as ex:
+                LOGGER.error("Unable to write ca certificate file. '%s'", ex)
+                raise ConfigWriteError(ex) from ex
+            parser[sec_name]["ca_file_path"] = "./ca.crt"
 
     parser.add_section("logging")
     parser["logging"] = {
@@ -71,3 +87,13 @@ def _read_config_file(file_path: str) -> configparser.ConfigParser:
 def _write_config_file(file_path: str, config: configparser.ConfigParser) -> None:
     with open(file_path, 'w') as file:
         config.write(file, True)
+
+
+def _read_txt_file(file_path: str) -> str:
+    with open(file_path, 'r') as file:
+        return file.read()
+
+
+def _write_txt_file(file_path: str, content: str) -> None:
+    with open(file_path, 'w') as file:
+        file.write(content)
