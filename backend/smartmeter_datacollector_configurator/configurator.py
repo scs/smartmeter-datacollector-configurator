@@ -42,14 +42,14 @@ def write_config_from_dto(file_path: str, config: ConfigDto) -> None:
     for i, reader in enumerate(config.readers):
         sec_name = f"reader{i}"
         parser.add_section(sec_name)
-        parser[sec_name] = reader.dict()
+        parser[sec_name] = reader.dict(exclude_none=True)
     sinks = (config.mqttSink, config.loggerSink)
     for i, sink in enumerate(sinks):
         if not sink:
             continue
         sec_name = f"sink{i}"
         parser.add_section(sec_name)
-        sec_dict = sink.dict(exclude={"ca_cert"}, exclude_none=True)
+        sec_dict = sink.dict(exclude={"caCert"}, exclude_none=True)
         print(sec_dict)
         parser[sec_name] = sec_dict
 
