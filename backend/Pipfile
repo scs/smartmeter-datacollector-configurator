@@ -22,3 +22,4 @@ format = "autopep8 --in-place  -r --aggressive smartmeter_datacollector_configur
 isort = "isort ."
 isort_check = "isort --check ."
 lint = "pylint smartmeter_datacollector_configurator/"
+lint_check = "pylint smartmeter_datacollector_configurator/ --exit-zero"
