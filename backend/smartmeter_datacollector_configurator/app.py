@@ -1,5 +1,8 @@
+import argparse
 import logging
+import os
 
+import uvicorn
 from pydantic.error_wrappers import ValidationError
 from starlette.applications import Starlette
 from starlette.authentication import requires
@@ -12,13 +15,12 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, PlainTextResponse
 from starlette.routing import Mount, Route
 from starlette.staticfiles import StaticFiles
+from starlette.types import ASGIApp
 
-from . import configurator
-from .authentication import BasicAuthBackend, SetPasswordError, auth_manager
-from .dto import ConfigDto, CredentialsDto
+import configurator
+from authentication import AuthManager, BasicAuthBackend, SetPasswordError
+from dto import ConfigDto, CredentialsDto
 
-DEFAULT_STATIC_DIR_PATH = "./static"
-DEFAULT_CONFIG_PATH = "./config.ini"
 LOGGER = logging.getLogger("uvicorn.error")
 
 
@@ -26,7 +28,7 @@ LOGGER = logging.getLogger("uvicorn.error")
 class Configuration(HTTPEndpoint):
     @requires("authenticated")
     async def get(self, request):
-        dto = configurator.retrieve_config(DEFAULT_CONFIG_PATH)
+        dto = configurator.retrieve_config(request.app.state.config_path)
         return JSONResponse(dto.json())
 
     @requires("authenticated")
@@ -37,7 +39,7 @@ class Configuration(HTTPEndpoint):
             LOGGER.warning("Validation failure: '%s'", e)
             raise HTTPException(status_code=400, detail="Validation of configuration failed.")
         try:
-            configurator.write_config_from_dto(DEFAULT_CONFIG_PATH, config)
+            configurator.write_config_from_dto(request.app.state.config_path, config)
         except configurator.ConfigWriteError as e:
             LOGGER.warning("Config write failed: '%s'", e)
             raise HTTPException(status_code=500, detail="Failed to write configuration.")
@@ -61,7 +63,7 @@ async def set_credentials(request: Request):
         LOGGER.warning("Credential validation error: %s", e)
         raise HTTPException(status_code=400, detail="New credentials are invalid.")
     try:
-        auth_manager.set_new_credentials(credential_dto)
+        request.app.state.auth_manager.set_new_credentials(credential_dto)
     except SetPasswordError as e:
         LOGGER.warning("Credential write error: '%s'", e)
         raise HTTPException(status_code=500, detail="Failed to write new credentials.")
@@ -69,19 +71,59 @@ async def set_credentials(request: Request):
     return PlainTextResponse()
 
 
-routes = [
-    Route('/api/config', Configuration, methods=['GET', 'POST']),
-    Route('/api/restart', restart, methods=['POST']),
-    Route('/api/credentials', set_credentials, methods=['POST']),
-    Mount('/', app=StaticFiles(directory=DEFAULT_STATIC_DIR_PATH, html=True))
-]
+def build_routes(static_file_path: str):
+    return [
+        Route('/api/config', Configuration, methods=['GET', 'POST']),
+        Route('/api/restart', restart, methods=['POST']),
+        Route('/api/credentials', set_credentials, methods=['POST']),
+        Mount('/', app=StaticFiles(directory=static_file_path, html=True))
+    ]
 
-middleware = [
-    Middleware(CORSMiddleware,
-               allow_origins=['*'],
-               allow_headers=["Authorization"],
-               allow_methods=["GET", "POST"]),
-    Middleware(AuthenticationMiddleware, backend=BasicAuthBackend())
-]
 
-app = Starlette(debug=True, routes=routes, middleware=middleware)
+def build_middleware():
+    return [
+        Middleware(CORSMiddleware,
+                   allow_origins=['*'],
+                   allow_headers=["Authorization"],
+                   allow_methods=["GET", "POST"]),
+        Middleware(AuthenticationMiddleware, backend=BasicAuthBackend())
+    ]
+
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(
+        description="Smartmeter Datacollector Configurator Backend", add_help=True)
+    parser.add_argument(
+        '-c', '--config', help="Directory path where config files should be deployed.", default=".")
+    parser.add_argument(
+        '-s', '--static', help="Director path with the static files.", default="./static")
+    parser.add_argument(
+        '--host', help="Host IP, default: 127.0.0.1", default="127.0.0.1")
+    parser.add_argument(
+        '--port', help="Port, default: 8000", type=int, default=8000)
+    parser.add_argument(
+        '-d', '--dev', help="Development mode: debug log, reloading", action='store_true')
+    return parser.parse_args()
+
+
+def web_app() -> ASGIApp:
+    args = parse_arguments()
+    static_path = os.path.normpath(args.static)
+    config_path = os.path.normpath(args.config)
+
+    web_app = Starlette(
+        debug=True if args.dev else False,
+        routes=build_routes(static_path),
+        middleware=build_middleware())
+
+    web_app.state.config_path = config_path
+    web_app.state.auth_manager = AuthManager(config_path)
+    return web_app
+
+
+if __name__ == '__main__':
+    args = parse_arguments()
+    debug_mode = True if args.dev else False
+    logger_level = "debug" if args.dev else "info"
+
+    uvicorn.run("app:web_app", host=args.host, port=args.port, log_level=logger_level, reload=debug_mode, factory=True)

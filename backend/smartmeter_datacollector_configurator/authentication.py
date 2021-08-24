@@ -6,7 +6,7 @@ from starlette.authentication import (AuthCredentials, AuthenticationBackend,
                                       AuthenticationError, SimpleUser)
 from starlette.requests import HTTPConnection
 
-from .dto import CredentialsDto
+from dto import CredentialsDto
 
 LOGGER = logging.getLogger("uvicorn.error")
 
@@ -18,10 +18,11 @@ class SetPasswordError(Exception):
 class AuthManager:
     USERNAME = "admin"
     DEFAULT_PASSWORD = "smartmeter"
-    PASSWORD_FILE_PATH = "./password.txt"
+    PWD_FILE_NAME = "password.txt"
 
-    def __init__(self) -> None:
-        self._password = self._read_pwd_file(self.PASSWORD_FILE_PATH)
+    def __init__(self, config_dir_path: str) -> None:
+        self._password = self._read_pwd_file(f"{config_dir_path}/{self.PWD_FILE_NAME}")
+        self._config_path = config_dir_path
 
     def check_credentials(self, username: str, password: str) -> bool:
         if username == self.USERNAME and password == self._password:
@@ -32,7 +33,7 @@ class AuthManager:
 
     def set_new_credentials(self, new_credentials: CredentialsDto) -> None:
         self._password = new_credentials.password
-        self._write_pwd_file(self._password, self.PASSWORD_FILE_PATH)
+        self._write_pwd_file(self._password, f"{self._config_path}/{self.PWD_FILE_NAME}")
 
     @staticmethod
     def _read_pwd_file(file_path: str) -> str:
@@ -57,9 +58,6 @@ class AuthManager:
             raise SetPasswordError(e) from e
 
 
-auth_manager = AuthManager()
-
-
 class BasicAuthBackend(AuthenticationBackend):
     async def authenticate(self, request: HTTPConnection):
         if "Authorization" not in request.headers:
@@ -75,6 +73,7 @@ class BasicAuthBackend(AuthenticationBackend):
             raise AuthenticationError('Invalid credentials.')
 
         username, _, password = decoded_credentials.partition(":")
+        auth_manager: AuthManager = request.app.state.auth_manager
 
         if auth_manager.check_credentials(username, password):
             return AuthCredentials(["authenticated"]), SimpleUser(username)

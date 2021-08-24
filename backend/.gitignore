@@ -142,5 +142,6 @@ cython_debug/
 .idea
 
 # Other
-config.ini
+datacollector.ini
 password.txt
+ca.crt

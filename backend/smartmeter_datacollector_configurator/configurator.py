@@ -1,7 +1,10 @@
 import configparser
 import logging
 
-from .dto import ConfigDto, LoggerSinkDto, MqttSinkDto, ReaderDto, SinkType
+from dto import ConfigDto, LoggerSinkDto, MqttSinkDto, ReaderDto, SinkType
+
+CA_FILE_NAME = "ca.crt"
+CONFIG_FILE_NAME = "datacollector.ini"
 
 LOGGER = logging.getLogger("uvicorn.error")
 
@@ -10,8 +13,8 @@ class ConfigWriteError(Exception):
     pass
 
 
-def retrieve_config(file_path: str) -> ConfigDto:
-    parser = _read_config_file(file_path)
+def retrieve_config(config_dir: str) -> ConfigDto:
+    parser = _read_config_file(f"{config_dir}/{CONFIG_FILE_NAME}")
     dto = ConfigDto()
     for sec in parser.sections():
         if sec.startswith("reader"):
@@ -27,7 +30,7 @@ def retrieve_config(file_path: str) -> ConfigDto:
                 dto.mqttSink = MqttSinkDto.parse_obj(sink_dict)
                 if "ca_file_path" in sink_dict:
                     try:
-                        dto.mqttSink.caCert = _read_txt_file("./ca.crt")
+                        dto.mqttSink.caCert = _read_txt_file(f"{config_dir}/{CA_FILE_NAME}")
                     except OSError as ex:
                         LOGGER.warning("Unable to read CA certificate file. '%s'", str(ex))
             elif sink_dict["type"] == SinkType.LOGGER:
@@ -37,7 +40,7 @@ def retrieve_config(file_path: str) -> ConfigDto:
     return dto
 
 
-def write_config_from_dto(file_path: str, config: ConfigDto) -> None:
+def write_config_from_dto(config_dir: str, config: ConfigDto) -> None:
     parser = configparser.ConfigParser()
     for i, reader in enumerate(config.readers):
         sec_name = f"reader{i}"
@@ -56,11 +59,11 @@ def write_config_from_dto(file_path: str, config: ConfigDto) -> None:
         # Handle CA certificate file
         if isinstance(sink, MqttSinkDto) and sink.caCert:
             try:
-                _write_txt_file("./ca.crt", sink.caCert)
+                _write_txt_file(f"{config_dir}/{CA_FILE_NAME}", sink.caCert)
             except OSError as ex:
                 LOGGER.error("Unable to write ca certificate file. '%s'", ex)
                 raise ConfigWriteError(ex) from ex
-            parser[sec_name]["ca_file_path"] = "./ca.crt"
+            parser[sec_name]["ca_file_path"] = f"{config_dir}/{CA_FILE_NAME}"
 
     parser.add_section("logging")
     parser["logging"] = {
@@ -68,7 +71,7 @@ def write_config_from_dto(file_path: str, config: ConfigDto) -> None:
     }
 
     try:
-        _write_config_file(file_path, parser)
+        _write_config_file(f"{config_dir}/{CONFIG_FILE_NAME}", parser)
     except OSError as ex:
         LOGGER.error("Unable to write config to file. '%s'", ex)
         raise ConfigWriteError(ex) from ex
