@@ -18,6 +18,7 @@ from starlette.staticfiles import StaticFiles
 from starlette.types import ASGIApp
 
 import configurator
+import system
 from authentication import AuthManager, BasicAuthBackend, SetPasswordError
 from dto import ConfigDto, CredentialsDto
 
@@ -50,7 +51,22 @@ class Configuration(HTTPEndpoint):
 
 
 @requires("authenticated")
-async def restart(request):
+async def restart_datacollector(request):
+    try:
+        await system.restart_datacollector()
+    except (system.NoPermissionError, system.NotInstalledError, system.SystemError) as e:
+        raise HTTPException(status_code=503, detail=str(e))
+    return PlainTextResponse()
+
+
+@requires("authenticated")
+async def restart_demo(request):
+    try:
+        not_installed_services = await system.restart_demo()
+    except (system.NoPermissionError, system.SystemError) as e:
+        raise HTTPException(status_code=503, detail=str(e))
+    if len(not_installed_services) > 0:
+        raise HTTPException(status_code=503, detail=f"{str(not_installed_services)} are not installed.")
     return PlainTextResponse()
 
 
@@ -74,7 +90,8 @@ async def set_credentials(request: Request):
 def build_routes(static_file_path: str):
     return [
         Route('/api/config', Configuration, methods=['GET', 'POST']),
-        Route('/api/restart', restart, methods=['POST']),
+        Route('/api/restart', restart_datacollector, methods=['POST']),
+        Route('/api/restart-demo', restart_demo, methods=['POST']),
         Route('/api/credentials', set_credentials, methods=['POST']),
         Mount('/', app=StaticFiles(directory=static_file_path, html=True))
     ]
