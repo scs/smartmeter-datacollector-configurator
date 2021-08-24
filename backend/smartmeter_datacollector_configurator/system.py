@@ -35,6 +35,7 @@ async def restart_datacollector() -> None:
 
     return_code = await proc.wait()
     _analyze_return_code(return_code, DATACOL_SERVICE)
+    LOGGER.info("%s successfully restarted.", DATACOL_SERVICE)
 
 
 async def restart_demo() -> List[str]:
@@ -58,7 +59,7 @@ async def restart_demo() -> List[str]:
             _analyze_return_code(return_code, service)
         except NotInstalledError:
             # continue if one of the services is not installed
-            not_installed += service
+            not_installed.append(service)
             continue
 
     demo_services.reverse()
@@ -76,18 +77,21 @@ async def restart_demo() -> List[str]:
             # continue if one of the services is not installed
             continue
 
+    if len(not_installed) > 0:
+        LOGGER.warning("Services %s not found.", not_installed)
+    else:
+        LOGGER.info("Demo services successfully restarted.")
+
     return not_installed
 
 
 def _analyze_return_code(return_code: int, service: str) -> None:
     if return_code == 4:
+        LOGGER.error("Insufficient system privileges.")
+        raise NoPermissionError("Insufficient system privileges to restart service.")
+    elif return_code == 5:
         LOGGER.error("%s is not installed.", service)
         raise NotInstalledError(f"{service} is not installed.")
-    elif return_code == 5:
-        LOGGER.error("Insufficient system privileges.")
-        raise NoPermissionError()
     elif return_code > 0:
-        LOGGER.error("General error while restarting %s", service)
+        LOGGER.error("General error %s", service)
         raise SystemError("Return code: %i", return_code)
-
-    LOGGER.info("%s successfully restarted.", service)
