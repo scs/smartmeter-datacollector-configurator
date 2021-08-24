@@ -53,7 +53,6 @@ def write_config_from_dto(config_dir: str, config: ConfigDto) -> None:
         sec_name = f"sink{i}"
         parser.add_section(sec_name)
         sec_dict = sink.dict(exclude={"caCert"}, exclude_none=True)
-        print(sec_dict)
         parser[sec_name] = sec_dict
 
         # Handle CA certificate file
