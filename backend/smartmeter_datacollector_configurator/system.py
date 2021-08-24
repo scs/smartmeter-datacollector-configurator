@@ -1,10 +1,12 @@
 import asyncio
 import logging
+import subprocess
 from typing import List
 
 LOGGER = logging.getLogger("uvicorn.error")
 
 SYSCTL_BIN = "/bin/systemctl"
+LS_BIN = "/bin/ls"
 
 DATACOL_SERVICE = "smartmeter-datacollector"
 
@@ -83,6 +85,16 @@ async def restart_demo() -> List[str]:
         LOGGER.info("Demo services successfully restarted.")
 
     return not_installed
+
+
+def retrieve_tty_devices() -> List[str]:
+    cmd = f"{LS_BIN} /dev/ttyUSB*"
+    try:
+        output = subprocess.run(cmd, shell=True, text=True, capture_output=True, check=True)
+    except subprocess.CalledProcessError as e:
+        LOGGER.error("Unable to get tty devices. (%s)", e)
+        return []
+    return output.stdout.rsplit()
 
 
 def _analyze_return_code(return_code: int, service: str) -> None:

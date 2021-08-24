@@ -87,12 +87,18 @@ async def set_credentials(request: Request):
     return PlainTextResponse()
 
 
+async def get_tty_devices(request):
+    devices = system.retrieve_tty_devices()
+    return JSONResponse(devices)
+
+
 def build_routes(static_file_path: str):
     return [
         Route('/api/config', Configuration, methods=['GET', 'POST']),
         Route('/api/restart', restart_datacollector, methods=['POST']),
         Route('/api/restart-demo', restart_demo, methods=['POST']),
         Route('/api/credentials', set_credentials, methods=['POST']),
+        Route('/api/ttydevices', get_tty_devices, methods=['GET']),
         Mount('/', app=StaticFiles(directory=static_file_path, html=True))
     ]
 
