@@ -145,7 +145,7 @@ export default {
         title: "Discard Configuration",
         message: "Do you want to reset the current configuration?",
         confirmText: "Reset",
-        type: "is-danger",
+        type: "is-warning",
         hasIcon: true,
         onConfirm: this.resetConfig,
       });
@@ -155,7 +155,7 @@ export default {
         title: "Load Configuration",
         message: "The current configuration will be overwritten.",
         confirmText: "Download",
-        type: "is-danger",
+        type: "is-warning",
         hasIcon: true,
         onConfirm: this.loadConfig,
       });
@@ -165,7 +165,7 @@ export default {
         title: "Deploy Configuration",
         message: "Do you want to upload and deploy the configuration?",
         confirmText: "Upload",
-        type: "is-danger",
+        type: "is-warning",
         hasIcon: true,
         onConfirm: this.deployConfig,
       });
