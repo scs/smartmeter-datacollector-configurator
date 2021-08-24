@@ -11,6 +11,7 @@ pydantic = "~=1.8"
 [dev-packages]
 autopep8 = "*"
 pylint = "*"
+isort = "*"
 
 [requires]
 python_version = "3.8"
@@ -18,4 +19,6 @@ python_version = "3.8"
 [scripts]
 format_check = "autopep8 --diff -r --aggressive smartmeter_datacollector_configurator/"
 format = "autopep8 --in-place  -r --aggressive smartmeter_datacollector_configurator/"
+isort = "isort ."
+isort_check = "isort --check ."
 lint = "pylint smartmeter_datacollector_configurator/"
