@@ -8,9 +8,10 @@
         <b-button class="level-item" icon-left="download" @click="checkCredentials(confirmDeploy)"
           >Deploy Configuration</b-button
         >
-        <b-button class="level-item" icon-left="sync-alt" @click="checkCredentials(restartServices)"
-          >Restart Services</b-button
+        <b-button class="level-item" icon-left="sync-alt" @click="checkCredentials(restartDatacollector)"
+          >Restart Datacollector</b-button
         >
+        <b-button class="level-item" icon-left="sync-alt" @click="checkCredentials(restartDemo)">Restart Demo</b-button>
         <b-button
           class="level-item"
           icon-left="key"
@@ -227,7 +228,7 @@ export default {
           });
         });
     },
-    restartServices() {
+    restartDatacollector() {
       axios
         .post(`${getBaseHostUrl()}/restart`, null, {
           timeout: 6000,
@@ -235,7 +236,31 @@ export default {
         })
         .then(() => {
           this.$buefy.toast.open({
-            message: "Services successfully restarted.",
+            message: "Datacollector successfully restarted.",
+            type: "is-success",
+            position: "is-top",
+            duration: 4000,
+          });
+        })
+        .catch((error) => {
+          const message = this.parseError(error);
+          this.$buefy.toast.open({
+            message: message,
+            type: "is-danger",
+            position: "is-top",
+            duration: 4000,
+          });
+        });
+    },
+    restartDemo() {
+      axios
+        .post(`${getBaseHostUrl()}/restart-demo`, null, {
+          timeout: 8000,
+          auth: this.getAuthentication(),
+        })
+        .then(() => {
+          this.$buefy.toast.open({
+            message: "Demo successfully restarted.",
             type: "is-success",
             position: "is-top",
             duration: 4000,
