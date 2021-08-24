@@ -1,0 +1,11 @@
+[Unit]
+Description=Smartmeter Datacollector Configurator Service
+
+[Service]
+Type=simple
+Restart=on-failure
+ExecStartPre=mkdir -p /var/lib/smartmeter-datacollector
+ExecStart=/usr/bin/python3 smartmeter_datacollector_configurator/app.py --host 0.0.0.0 --port 8000 -c /var/lib/smartmeter-datacollector/datacollector.ini -s /var/lib/smartmeter-datacollector/static 
+
+[Install]
+WantedBy=multi-user.target
