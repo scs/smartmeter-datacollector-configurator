@@ -2,7 +2,11 @@ import argparse
 import logging
 import os
 
+import configurator
+import system
 import uvicorn
+from authentication import AuthManager, BasicAuthBackend, SetPasswordError
+from dto import ConfigDto, CredentialsDto
 from pydantic.error_wrappers import ValidationError
 from starlette.applications import Starlette
 from starlette.authentication import requires
@@ -16,11 +20,6 @@ from starlette.responses import JSONResponse, PlainTextResponse
 from starlette.routing import Mount, Route
 from starlette.staticfiles import StaticFiles
 from starlette.types import ASGIApp
-
-import configurator
-import system
-from authentication import AuthManager, BasicAuthBackend, SetPasswordError
-from dto import ConfigDto, CredentialsDto
 
 LOGGER = logging.getLogger("uvicorn.error")
 

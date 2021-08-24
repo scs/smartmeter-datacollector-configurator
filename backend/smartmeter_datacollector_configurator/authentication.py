@@ -2,11 +2,9 @@ import base64
 import binascii
 import logging
 
-from starlette.authentication import (AuthCredentials, AuthenticationBackend,
-                                      AuthenticationError, SimpleUser)
-from starlette.requests import HTTPConnection
-
 from dto import CredentialsDto
+from starlette.authentication import AuthCredentials, AuthenticationBackend, AuthenticationError, SimpleUser
+from starlette.requests import HTTPConnection
 
 LOGGER = logging.getLogger("uvicorn.error")
 
