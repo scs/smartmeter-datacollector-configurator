@@ -2,11 +2,7 @@ import argparse
 import logging
 import os
 
-import configurator
-import system
 import uvicorn
-from authentication import AuthManager, BasicAuthBackend, SetPasswordError
-from dto import ConfigDto, CredentialsDto
 from pydantic.error_wrappers import ValidationError
 from starlette.applications import Starlette
 from starlette.authentication import requires
@@ -20,6 +16,10 @@ from starlette.responses import JSONResponse, PlainTextResponse
 from starlette.routing import Mount, Route
 from starlette.staticfiles import StaticFiles
 from starlette.types import ASGIApp
+
+from . import configurator, system
+from .authentication import AuthManager, BasicAuthBackend, SetPasswordError
+from .dto import ConfigDto, CredentialsDto
 
 LOGGER = logging.getLogger("uvicorn.error")
 
@@ -143,9 +143,14 @@ def web_app() -> ASGIApp:
     return web_app
 
 
-if __name__ == '__main__':
+def main():
     args = parse_arguments()
     debug_mode = True if args.dev else False
     logger_level = "debug" if args.dev else "info"
 
-    uvicorn.run("app:web_app", host=args.host, port=args.port, log_level=logger_level, reload=debug_mode, factory=True)
+    uvicorn.run("smartmeter_datacollector_configurator.app:web_app",
+                host=args.host,
+                port=args.port,
+                log_level=logger_level,
+                reload=debug_mode,
+                factory=True)

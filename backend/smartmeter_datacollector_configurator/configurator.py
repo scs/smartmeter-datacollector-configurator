@@ -1,7 +1,7 @@
 import configparser
 import logging
 
-from dto import ConfigDto, LoggerSinkDto, MqttSinkDto, ReaderDto, SinkType
+from .dto import ConfigDto, LoggerSinkDto, MqttSinkDto, ReaderDto, SinkType
 
 CA_FILE_NAME = "ca.crt"
 CONFIG_FILE_NAME = "datacollector.ini"
