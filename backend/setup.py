@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
-from setuptools import setup, find_packages
 from os import path
+
+from setuptools import find_packages, setup
 
 from smartmeter_datacollector_configurator.__version__ import __version__
 
