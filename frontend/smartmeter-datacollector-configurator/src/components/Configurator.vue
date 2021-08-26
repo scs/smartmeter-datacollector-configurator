@@ -277,19 +277,19 @@ export default {
         });
     },
     extractConfig(cfg) {
-      this.loggerLevel = cfg["logLevel"] || "WARNING";
+      this.loggerLevel = cfg["log_level"] || "WARNING";
       this.readers = cfg["readers"].map((r, index) => {
         return { id: index, config: r };
       });
-      this.mqttSink = cfg["mqttSink"] || null;
-      this.loggerSink = cfg["loggerSink"] || null;
+      this.mqttSink = cfg["mqtt_sink"] || null;
+      this.loggerSink = cfg["logger_sink"] || null;
     },
     packConfig() {
       return {
-        logLevel: this.loggerLevel,
+        log_level: this.loggerLevel,
         readers: this.readers.map((r) => r.config),
-        mqttSink: this.mqttSink,
-        loggerSink: this.loggerSink,
+        mqtt_sink: this.mqttSink,
+        logger_sink: this.loggerSink,
       };
     },
     changePasswordModal() {

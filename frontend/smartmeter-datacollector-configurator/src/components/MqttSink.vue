@@ -48,7 +48,7 @@ export default {
       host: this.initConfig.host || "",
       port: this.initConfig.port || 1883,
       tls: "tls" in this.initConfig ? this.initConfig.tls : false,
-      caCert: this.initConfig.caCert || "",
+      caCert: this.initConfig.ca_cert || "",
       authEnabled: this.initConfig.username != null,
       username: this.initConfig.username || "",
       password: this.initConfig.password || "",
@@ -64,7 +64,7 @@ export default {
         host: this.host,
         port: this.port,
         tls: this.tls,
-        caCert: this.caCert && this.tls ? this.caCert : null,
+        ca_cert: this.caCert && this.tls ? this.caCert : null,
         username: this.authEnabled && this.username ? this.username : null,
         password: this.authEnabled && this.password ? this.password : null,
       });
