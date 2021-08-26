@@ -46,6 +46,7 @@ setup(
         "starlette==0.16.0",
         "uvicorn==0.15.0",
     ],
+    scripts=['scripts/smartmeter-datacollector-configurator'],
     zip_safe=True,
     dependency_links=[],
 )
