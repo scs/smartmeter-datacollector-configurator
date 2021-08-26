@@ -23,6 +23,9 @@
         @input="update"
       ></b-input>
     </b-field>
+    <b-field v-show="caCert.trim()">
+      <b-checkbox v-model="checkHostname" :value="true" @input="update">Check Hostname</b-checkbox>
+    </b-field>
     <b-field>
       <b-checkbox v-model="authEnabled" :value="false" @input="update">Use Authentication</b-checkbox>
     </b-field>
@@ -49,6 +52,7 @@ export default {
       port: this.initConfig.port || 1883,
       tls: "tls" in this.initConfig ? this.initConfig.tls : false,
       caCert: this.initConfig.ca_cert || "",
+      checkHostname: this.initConfig.check_hostname ? true : false,
       authEnabled: this.initConfig.username != null,
       username: this.initConfig.username || "",
       password: this.initConfig.password || "",
@@ -65,6 +69,7 @@ export default {
         port: this.port,
         tls: this.tls,
         ca_cert: this.caCert && this.tls ? this.caCert : null,
+        check_hostname: this.checkHostname,
         username: this.authEnabled && this.username ? this.username : null,
         password: this.authEnabled && this.password ? this.password : null,
       });
