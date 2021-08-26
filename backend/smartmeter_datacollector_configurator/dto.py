@@ -39,7 +39,7 @@ class MqttSinkDto(BaseModel):
     host: str
     port: int = 1883
     tls: bool = False
-    caCert: Optional[str]
+    ca_cert: Optional[str]
     username: Optional[str]
     password: Optional[str]
 
@@ -68,12 +68,12 @@ class LoggerSinkDto(BaseModel):
 
 
 class ConfigDto(BaseModel):
-    logLevel: str = "WARNING"
+    log_level: str = "WARNING"
     readers: List[ReaderDto] = []
-    mqttSink: Optional[MqttSinkDto]
-    loggerSink: Optional[LoggerSinkDto]
+    mqtt_sink: Optional[MqttSinkDto]
+    logger_sink: Optional[LoggerSinkDto]
 
-    @validator("logLevel")
+    @validator("log_level")
     def log_level_valid(cls, v: str):
         lvl = v.strip().upper()
         if lvl not in LOGGER_LEVEL:

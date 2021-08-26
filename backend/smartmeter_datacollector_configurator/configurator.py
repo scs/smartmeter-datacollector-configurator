@@ -27,16 +27,16 @@ def retrieve_config(config_dir: str) -> ConfigDto:
                 LOGGER.warning("Type of sink not defined. Ignored.")
                 continue
             if sink_dict["type"] == SinkType.MQTT:
-                dto.mqttSink = MqttSinkDto.parse_obj(sink_dict)
+                dto.mqtt_sink = MqttSinkDto.parse_obj(sink_dict)
                 if "ca_file_path" in sink_dict:
                     try:
-                        dto.mqttSink.caCert = _read_txt_file(f"{config_dir}/{CA_FILE_NAME}")
+                        dto.mqtt_sink.ca_cert = _read_txt_file(f"{config_dir}/{CA_FILE_NAME}")
                     except OSError as ex:
                         LOGGER.warning("Unable to read CA certificate file. '%s'", str(ex))
             elif sink_dict["type"] == SinkType.LOGGER:
-                dto.loggerSink = LoggerSinkDto.parse_obj(sink_dict)
+                dto.logger_sink = LoggerSinkDto.parse_obj(sink_dict)
         elif sec == "logging":
-            dto.logLevel = parser.get(sec, "default", fallback="WARNING")
+            dto.log_level = parser.get(sec, "default", fallback="WARNING")
     return dto
 
 
@@ -46,19 +46,19 @@ def write_config_from_dto(config_dir: str, config: ConfigDto) -> None:
         sec_name = f"reader{i}"
         parser.add_section(sec_name)
         parser[sec_name] = reader.dict(exclude_none=True)
-    sinks = (config.mqttSink, config.loggerSink)
+    sinks = (config.mqtt_sink, config.logger_sink)
     for i, sink in enumerate(sinks):
         if not sink:
             continue
         sec_name = f"sink{i}"
         parser.add_section(sec_name)
-        sec_dict = sink.dict(exclude={"caCert"}, exclude_none=True)
+        sec_dict = sink.dict(exclude={"ca_cert"}, exclude_none=True)
         parser[sec_name] = sec_dict
 
         # Handle CA certificate file
-        if isinstance(sink, MqttSinkDto) and sink.caCert:
+        if isinstance(sink, MqttSinkDto) and sink.ca_cert:
             try:
-                _write_txt_file(f"{config_dir}/{CA_FILE_NAME}", sink.caCert)
+                _write_txt_file(f"{config_dir}/{CA_FILE_NAME}", sink.ca_cert)
             except OSError as ex:
                 LOGGER.error("Unable to write ca certificate file. '%s'", ex)
                 raise ConfigWriteError(ex) from ex
@@ -66,7 +66,7 @@ def write_config_from_dto(config_dir: str, config: ConfigDto) -> None:
 
     parser.add_section("logging")
     parser["logging"] = {
-        "default": config.logLevel
+        "default": config.log_level
     }
 
     try:
