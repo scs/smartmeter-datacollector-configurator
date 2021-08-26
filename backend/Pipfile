@@ -4,9 +4,9 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-starlette = "~=0.16"
-uvicorn = "~=0.14"
-pydantic = "~=1.8"
+starlette = "~=0.16.0"
+uvicorn = "~=0.15.0"
+pydantic = "~=1.8.2"
 
 [dev-packages]
 autopep8 = "*"
