@@ -40,6 +40,7 @@ class MqttSinkDto(BaseModel):
     port: int = 1883
     tls: bool = False
     ca_cert: Optional[str]
+    check_hostname: bool = True
     username: Optional[str]
     password: Optional[str]
 
