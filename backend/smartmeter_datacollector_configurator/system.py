@@ -25,7 +25,7 @@ class NotInstalledError(Exception):
     pass
 
 
-class SystemError(Exception):
+class GeneralSystemError(Exception):
     pass
 
 
@@ -36,7 +36,7 @@ async def restart_datacollector() -> None:
         DATACOL_SERVICE)
 
     return_code = await proc.wait()
-    _analyze_return_code(return_code, DATACOL_SERVICE)
+    _check_for_error(return_code, DATACOL_SERVICE)
     LOGGER.info("%s successfully restarted.", DATACOL_SERVICE)
 
 
@@ -58,7 +58,7 @@ async def restart_demo() -> List[str]:
 
         return_code = await proc.wait()
         try:
-            _analyze_return_code(return_code, service)
+            _check_for_error(return_code, service)
         except NotInstalledError:
             # continue if one of the services is not installed
             not_installed.append(service)
@@ -74,7 +74,7 @@ async def restart_demo() -> List[str]:
 
         return_code = await proc.wait()
         try:
-            _analyze_return_code(return_code, service)
+            _check_for_error(return_code, service)
         except NotInstalledError:
             # continue if one of the services is not installed
             continue
@@ -91,19 +91,19 @@ def retrieve_tty_devices() -> List[str]:
     cmd = f"{LS_BIN} /dev/ttyUSB*"
     try:
         output = subprocess.run(cmd, shell=True, text=True, capture_output=True, check=True)
-    except subprocess.CalledProcessError as e:
-        LOGGER.error("Unable to get tty devices. (%s)", e)
+    except subprocess.CalledProcessError as ex:
+        LOGGER.error("Unable to get tty devices. (%s)", ex)
         return []
     return output.stdout.rsplit()
 
 
-def _analyze_return_code(return_code: int, service: str) -> None:
+def _check_for_error(return_code: int, service: str) -> None:
     if return_code == 4:
         LOGGER.error("Insufficient system privileges.")
         raise NoPermissionError("Insufficient system privileges to restart service.")
-    elif return_code == 5:
+    if return_code == 5:
         LOGGER.error("%s is not installed.", service)
         raise NotInstalledError(f"{service} is not installed.")
-    elif return_code > 0:
+    if return_code > 0:
         LOGGER.error("General error %s", service)
-        raise SystemError("Return code: %i", return_code)
+        raise GeneralSystemError(f"Return code: {return_code}")

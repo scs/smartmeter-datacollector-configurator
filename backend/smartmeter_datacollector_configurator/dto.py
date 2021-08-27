@@ -17,6 +17,7 @@ class SinkType(str, Enum):
 
 
 class BaseModel(PydanticBaseModel):
+    # pylint: disable=too-few-public-methods
     class Config:
         anystr_strip_whitespace = True
         use_enum_values = True
@@ -28,10 +29,11 @@ class ReaderDto(BaseModel):
     key: Optional[str]
 
     @validator("port")
-    def port_not_empty(cls, v: str):
-        if not v.strip():
+    @classmethod
+    def port_not_empty(cls, val: str):
+        if not val.strip():
             raise ValueError("Smartmeter port must not be empty.")
-        return v.strip()
+        return val.strip()
 
 
 class MqttSinkDto(BaseModel):
@@ -45,16 +47,18 @@ class MqttSinkDto(BaseModel):
     password: Optional[str]
 
     @validator("host")
-    def host_not_empty(cls, v: str):
-        if not v:
+    @classmethod
+    def host_not_empty(cls, val: str):
+        if not val:
             raise ValueError("MQTT host must not be empty.")
-        return v
+        return val
 
     @validator("port")
-    def port_valid_range(cls, v: int):
-        if v <= 0 or v > 65535:
-            raise ValueError(f"Invalid MQTT sink port {v}.")
-        return v
+    @classmethod
+    def port_valid_range(cls, val: int):
+        if val <= 0 or val > 65535:
+            raise ValueError(f"Invalid MQTT sink port {val}.")
+        return val
 
 
 class LoggerSinkDto(BaseModel):
@@ -62,10 +66,11 @@ class LoggerSinkDto(BaseModel):
     name: str = "DataLogger"
 
     @validator("name")
-    def name_not_empty(cls, v: str):
-        if not v.strip():
+    @classmethod
+    def name_not_empty(cls, val: str):
+        if not val.strip():
             raise ValueError("Name must not be empty.")
-        return v.strip()
+        return val.strip()
 
 
 class ConfigDto(BaseModel):
@@ -75,8 +80,9 @@ class ConfigDto(BaseModel):
     logger_sink: Optional[LoggerSinkDto]
 
     @validator("log_level")
-    def log_level_valid(cls, v: str):
-        lvl = v.strip().upper()
+    @classmethod
+    def log_level_valid(cls, val: str):
+        lvl = val.strip().upper()
         if lvl not in LOGGER_LEVEL:
             raise ValueError(f"Invalid logging level '{lvl}'. Must be one of {LOGGER_LEVEL}")
         return lvl
@@ -86,8 +92,9 @@ class CredentialsDto(BaseModel):
     password: str
 
     @validator("password")
-    def password_valid(cls, v: str):
-        pwd = v.strip()
+    @classmethod
+    def password_valid(cls, val: str):
+        pwd = val.strip()
         if len(pwd) < 8 or len(pwd) > 30:
             raise ValueError("Invalid password length.")
         return pwd

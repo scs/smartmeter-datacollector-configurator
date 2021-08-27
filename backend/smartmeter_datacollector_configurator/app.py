@@ -35,14 +35,14 @@ class Configuration(HTTPEndpoint):
     async def post(self, request: Request):
         try:
             config = ConfigDto.parse_obj(await request.json())
-        except ValidationError as e:
-            LOGGER.warning("Validation failure: '%s'", e)
-            raise HTTPException(status_code=400, detail="Validation of configuration failed.")
+        except ValidationError as ex:
+            LOGGER.warning("Validation failure: '%s'", ex)
+            raise HTTPException(status_code=400, detail="Validation of configuration failed.") from ex
         try:
             configurator.write_config_from_dto(request.app.state.config_path, config)
-        except configurator.ConfigWriteError as e:
-            LOGGER.warning("Config write failed: '%s'", e)
-            raise HTTPException(status_code=500, detail="Failed to write configuration.")
+        except configurator.ConfigWriteError as ex:
+            LOGGER.warning("Config write failed: '%s'", ex)
+            raise HTTPException(status_code=500, detail="Failed to write configuration.") from ex
 
         LOGGER.info("Configuration updated.")
         LOGGER.debug("Config: %s", config)
@@ -51,19 +51,21 @@ class Configuration(HTTPEndpoint):
 
 @requires("authenticated")
 async def restart_datacollector(request):
+    # pylint: disable=unused-argument
     try:
         await system.restart_datacollector()
-    except (system.NoPermissionError, system.NotInstalledError, system.SystemError) as e:
-        raise HTTPException(status_code=503, detail=str(e))
+    except (system.NoPermissionError, system.NotInstalledError, system.GeneralSystemError) as ex:
+        raise HTTPException(status_code=503, detail=str(ex)) from ex
     return PlainTextResponse()
 
 
 @requires("authenticated")
 async def restart_demo(request):
+    # pylint: disable=unused-argument
     try:
         not_installed_services = await system.restart_demo()
-    except (system.NoPermissionError, system.SystemError) as e:
-        raise HTTPException(status_code=503, detail=str(e))
+    except (system.NoPermissionError, system.GeneralSystemError) as ex:
+        raise HTTPException(status_code=503, detail=str(ex)) from ex
     if len(not_installed_services) > 0:
         raise HTTPException(status_code=503, detail=f"{str(not_installed_services)} are not installed.")
     return PlainTextResponse()
@@ -74,19 +76,20 @@ async def set_credentials(request: Request):
     try:
         new_password = (await request.body()).decode("utf-8")
         credential_dto = CredentialsDto(password=new_password)
-    except (UnicodeDecodeError, ValidationError) as e:
-        LOGGER.warning("Credential validation error: %s", e)
-        raise HTTPException(status_code=400, detail="New credentials are invalid.")
+    except (UnicodeDecodeError, ValidationError) as ex:
+        LOGGER.warning("Credential validation error: %s", ex)
+        raise HTTPException(status_code=400, detail="New credentials are invalid.") from ex
     try:
         request.app.state.auth_manager.set_new_credentials(credential_dto)
-    except SetPasswordError as e:
-        LOGGER.warning("Credential write error: '%s'", e)
-        raise HTTPException(status_code=500, detail="Failed to write new credentials.")
+    except SetPasswordError as ex:
+        LOGGER.warning("Credential write error: '%s'", ex)
+        raise HTTPException(status_code=500, detail="Failed to write new credentials.") from ex
     LOGGER.debug("New credentials are successfully set.")
     return PlainTextResponse()
 
 
 async def get_tty_devices(request):
+    # pylint: disable=unused-argument
     devices = system.retrieve_tty_devices()
     return JSONResponse(devices)
 
@@ -133,19 +136,19 @@ def web_app() -> ASGIApp:
     static_path = os.path.normpath(args.static)
     config_path = os.path.normpath(args.config)
 
-    web_app = Starlette(
-        debug=True if args.dev else False,
+    app = Starlette(
+        debug=bool(args.dev),
         routes=build_routes(static_path),
         middleware=build_middleware())
 
-    web_app.state.config_path = config_path
-    web_app.state.auth_manager = AuthManager(config_path)
-    return web_app
+    app.state.config_path = config_path
+    app.state.auth_manager = AuthManager(config_path)
+    return app
 
 
 def main():
     args = parse_arguments()
-    debug_mode = True if args.dev else False
+    debug_mode = bool(args.dev)
     logger_level = "debug" if args.dev else "info"
 
     uvicorn.run("smartmeter_datacollector_configurator.app:web_app",

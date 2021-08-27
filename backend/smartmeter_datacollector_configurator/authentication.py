@@ -37,42 +37,43 @@ class AuthManager:
     @staticmethod
     def _read_pwd_file(file_path: str) -> str:
         try:
-            with open(file_path, "r") as file:
+            with open(file_path, "r", encoding="utf-8") as file:
                 pwd = file.readline()
                 if not pwd.strip():
                     raise ValueError("Password file is empty.")
                 return pwd
-        except (OSError, ValueError) as e:
-            LOGGER.warning(f"Unable to read password file. '{e}' \n\tGenerating new file with default password.")
+        except (OSError, ValueError) as ex:
+            LOGGER.warning("Unable to read password file. '%s' \n\tGenerating new file with default password.", ex)
             AuthManager._write_pwd_file(AuthManager.DEFAULT_PASSWORD, file_path)
             return AuthManager.DEFAULT_PASSWORD
 
     @staticmethod
     def _write_pwd_file(password: str, file_path: str) -> None:
         try:
-            with open(file_path, "w") as file:
+            with open(file_path, "w", encoding="utf-8") as file:
                 file.write(password.strip())
-        except OSError as e:
-            LOGGER.error(f"Unable to write password file. '{e}'")
-            raise SetPasswordError(e) from e
+        except OSError as ex:
+            LOGGER.error("Unable to write password file. '%s'", ex)
+            raise SetPasswordError(ex) from ex
 
 
 class BasicAuthBackend(AuthenticationBackend):
-    async def authenticate(self, request: HTTPConnection):
-        if "Authorization" not in request.headers:
+    # pylint: disable=too-few-public-methods
+    async def authenticate(self, conn: HTTPConnection):
+        if "Authorization" not in conn.headers:
             return
 
-        auth = request.headers["Authorization"]
+        auth = conn.headers["Authorization"]
         try:
             scheme, credentials = auth.split()
             if scheme.lower() != "basic":
                 return
             decoded_credentials = base64.b64decode(credentials).decode("ascii")
-        except (ValueError, UnicodeDecodeError, binascii.Error):
-            raise AuthenticationError('Invalid credentials.')
+        except (ValueError, UnicodeDecodeError, binascii.Error) as ex:
+            raise AuthenticationError('Invalid credentials.') from ex
 
         username, _, password = decoded_credentials.partition(":")
-        auth_manager: AuthManager = request.app.state.auth_manager
+        auth_manager: AuthManager = conn.app.state.auth_manager
 
         if auth_manager.check_credentials(username, password):
             return AuthCredentials(["authenticated"]), SimpleUser(username)

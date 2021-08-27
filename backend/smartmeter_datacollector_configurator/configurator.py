@@ -87,15 +87,15 @@ def _read_config_file(file_path: str) -> configparser.ConfigParser:
 
 
 def _write_config_file(file_path: str, config: configparser.ConfigParser) -> None:
-    with open(file_path, 'w') as file:
+    with open(file_path, 'w', encoding="utf-8") as file:
         config.write(file, True)
 
 
 def _read_txt_file(file_path: str) -> str:
-    with open(file_path, 'r') as file:
+    with open(file_path, 'r', encoding="utf-8") as file:
         return file.read()
 
 
 def _write_txt_file(file_path: str, content: str) -> None:
-    with open(file_path, 'w') as file:
+    with open(file_path, 'w', encoding="utf-8") as file:
         file.write(content)
