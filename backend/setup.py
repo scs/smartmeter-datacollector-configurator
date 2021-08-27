@@ -54,7 +54,7 @@ setup(
         "typing-extensions==3.10.0.0",
         "uvicorn==0.15.0",
     ],
-    scripts=["scripts/smartmeter-datacollector-configurator"],
+    scripts=["bin/smartmeter-datacollector-configurator"],
     zip_safe=True,
     dependency_links=[],
 )
