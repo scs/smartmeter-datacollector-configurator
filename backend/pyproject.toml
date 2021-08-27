@@ -8,14 +8,16 @@ max_line_length = 120
 [tool.isort]
 line_length = 120
 
-[tool.pylint]
-    [tool.pylint.MASTER]
-    init-hook='import sys; sys.path.append("./smartmeter_datacollector_configurator")'
-    [tool.pylint.FORMAT]
-    max-line-length=120
-    [tool.pylint."MESSAGES CONTROL"]
-        disable = [
-            "missing-module-docstring",
-            "missing-class-docstring",
-            "missing-function-docstring"
-        ]
+[tool.pylint.MASTER]
+init-hook='import sys; sys.path.append("./smartmeter_datacollector_configurator")'
+extension-pkg-whitelist='pydantic'
+
+[tool.pylint.FORMAT]
+max-line-length=120
+
+[tool.pylint."MESSAGES CONTROL"]
+disable = [
+    "missing-module-docstring",
+    "missing-class-docstring",
+    "missing-function-docstring"
+    ]
