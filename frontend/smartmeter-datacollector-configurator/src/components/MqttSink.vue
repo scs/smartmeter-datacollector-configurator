@@ -29,11 +29,11 @@
     <b-field>
       <b-checkbox v-model="authEnabled" :value="false" @input="update">Use Authentication</b-checkbox>
     </b-field>
-    <b-field v-show="authEnabled" label-position="on-border" label="Username">
+    <b-field v-show="authEnabled" label-position="on-border" label="MQTT Username">
       <b-input v-model="username" type="text" required lazy @input="update"></b-input>
     </b-field>
-    <b-field v-show="authEnabled" label-position="on-border" label="Password (optional)">
-      <b-input type="password" v-model="password" lazy password-reveal @input="update"></b-input>
+    <b-field v-show="authEnabled" label-position="on-border" label="MQTT Password">
+      <b-input type="password" v-model="password" required lazy password-reveal @input="update"></b-input>
     </b-field>
   </div>
 </template>
