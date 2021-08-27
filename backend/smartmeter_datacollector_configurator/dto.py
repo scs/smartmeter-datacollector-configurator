@@ -43,8 +43,8 @@ class MqttSinkDto(BaseModel):
     tls: bool = False
     ca_cert: Optional[str]
     check_hostname: bool = True
-    username: Optional[str]
     password: Optional[str]
+    username: Optional[str]
 
     @validator("host")
     @classmethod
@@ -58,6 +58,13 @@ class MqttSinkDto(BaseModel):
     def port_valid_range(cls, val: int):
         if val <= 0 or val > 65535:
             raise ValueError(f"Invalid MQTT sink port {val}.")
+        return val
+
+    @validator("username")
+    @classmethod
+    def username_password_exists(cls, val: str, values):
+        if val and not values["password"]:
+            raise ValueError("No password set for username.")
         return val
 
 
