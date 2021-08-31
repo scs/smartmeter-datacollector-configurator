@@ -10,10 +10,10 @@ pydantic = "~=1.8.2"
 
 [dev-packages]
 autopep8 = "*"
-pylint = "*"
+chardet = "*"
 isort = "*"
 pipenv-setup = "*"
-chardet = "*"
+pylint = "*"
 setuptools = "*"
 wheel = "*"
 
