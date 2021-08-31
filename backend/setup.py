@@ -39,7 +39,7 @@ setup(
     license="BSD",
     python_requires=">=3.7",
     packages=find_packages(
-        exclude=["contrib", "doc", "LICENSES", "scripts", "tests", "tests."]
+        exclude=["contrib", "doc", "scripts", "static", "tests", "tests."]
     ),
     include_package_data=True,
     install_requires=[
