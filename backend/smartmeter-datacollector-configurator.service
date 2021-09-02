@@ -1,5 +1,5 @@
 [Unit]
-Description=Smartmeter Datacollector Configurator Service
+Description=Smart Meter Datac Cllector Configurator Service
 
 [Service]
 Type=simple
