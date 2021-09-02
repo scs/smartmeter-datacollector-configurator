@@ -71,6 +71,7 @@ jobs:
         with:
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}
           repository_url: https://test.pypi.org/legacy/
+          packages_dir: backend/dist/
           skip_existing: true
 
       - name: Publish the Python package to PyPI
@@ -78,6 +79,7 @@ jobs:
         uses: pypa/gh-action-pypi-publish@v1.4.2
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
+          packages_dir: backend/dist/
 
       - name: Get the tag name
         id: tag-name
