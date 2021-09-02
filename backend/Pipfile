@@ -10,17 +10,21 @@ pydantic = "~=1.8.2"
 
 [dev-packages]
 autopep8 = "*"
-pylint = "*"
+chardet = "*"
 isort = "*"
 pipenv-setup = "*"
-chardet = "*"
+pylint = "*"
 setuptools = "*"
+twine = "*"
 wheel = "*"
 
 [requires]
 python_version = "3.8"
 
 [scripts]
+build = "bash ./scripts/build.sh"
+build_check = "twine check dist/*"
+clean = "rm -rf build dist smartmeter_datacollector_configurator/static smartmeter_datacollector_configurator.egg-info"
 format_check = "autopep8 --diff -r --aggressive smartmeter_datacollector_configurator/"
 format = "autopep8 --in-place  -r --aggressive smartmeter_datacollector_configurator/"
 isort = "isort ."

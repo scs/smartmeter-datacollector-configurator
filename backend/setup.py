@@ -29,17 +29,17 @@ setup(
     author_email="info@scs.ch",
     classifiers=[
         "Development Status :: 4 - Beta",
-        "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
+        "License :: OSI Approved :: BSD License",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Typing :: Typed",
     ],
-    license="GPLv2",
+    license="BSD",
     python_requires=">=3.7",
     packages=find_packages(
-        exclude=["contrib", "doc", "LICENSES", "scripts", "tests", "tests."]
+        exclude=["contrib", "doc", "scripts", "static", "tests", "tests."]
     ),
     include_package_data=True,
     install_requires=[

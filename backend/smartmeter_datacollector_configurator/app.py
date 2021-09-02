@@ -2,6 +2,7 @@ import argparse
 import logging
 import os
 
+import pkg_resources
 import uvicorn
 from pydantic.error_wrappers import ValidationError
 from starlette.applications import Starlette
@@ -23,8 +24,11 @@ from .dto import ConfigDto, CredentialsDto
 
 LOGGER = logging.getLogger("uvicorn.error")
 
+STATIC_DIR = 'static'
 
 # Endpoints
+
+
 class Configuration(HTTPEndpoint):
     @requires("authenticated")
     async def get(self, request):
@@ -121,7 +125,7 @@ def parse_arguments():
     parser.add_argument(
         '-c', '--config', help="Directory path where config files should be deployed.", default=".")
     parser.add_argument(
-        '-s', '--static', help="Director path with the static files.", default="./static")
+        '-s', '--static', help="Director path with the static files.", default="")
     parser.add_argument(
         '--host', help="Host IP, default: 127.0.0.1", default="127.0.0.1")
     parser.add_argument(
@@ -131,9 +135,30 @@ def parse_arguments():
     return parser.parse_args()
 
 
+def resolve_static(static_file_path: str) -> str:
+    static_path = None
+    if static_file_path:
+        static_path = static_file_path
+    else:
+        # try to find a packaged resource
+        if pkg_resources.resource_exists(__name__, STATIC_DIR):
+            manager = pkg_resources.ResourceManager()
+            provider = pkg_resources.get_provider(__name__)
+            static_path = provider.get_resource_filename(manager, STATIC_DIR)
+
+        if not static_path:
+            # fallback to a local static directory
+            static_path = STATIC_DIR
+
+    static_path = os.path.normpath(static_path)
+    LOGGER.info("Serving static files from %s.", static_path)
+
+    return static_path
+
+
 def web_app() -> ASGIApp:
     args = parse_arguments()
-    static_path = os.path.normpath(args.static)
+    static_path = resolve_static(args.static)
     config_path = os.path.normpath(args.config)
 
     app = Starlette(
