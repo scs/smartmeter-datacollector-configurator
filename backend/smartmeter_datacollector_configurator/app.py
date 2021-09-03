@@ -121,7 +121,7 @@ def build_middleware():
 
 def parse_arguments():
     parser = argparse.ArgumentParser(
-        description="Smartmeter Datacollector Configurator Backend", add_help=True)
+        description="Smart Meter Data Collector Configurator Backend", add_help=True)
     parser.add_argument(
         '-c', '--config', help="Directory path where config files should be deployed.", default=".")
     parser.add_argument(

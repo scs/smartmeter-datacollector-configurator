@@ -5,7 +5,7 @@
         <img class="image level-item is-128x128" alt="EKZ Logo" src="./assets/ekz_logo.png" />
       </div>
       <div class="level-right">
-        <div class="level-item subtitle is-4">Smartmeter Datacollector Configurator</div>
+        <div class="level-item subtitle is-4">Smart Meter Data Collector Configurator</div>
       </div>
     </header>
     <configurator />

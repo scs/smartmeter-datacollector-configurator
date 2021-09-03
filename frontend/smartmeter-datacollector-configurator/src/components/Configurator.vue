@@ -9,7 +9,7 @@
           >Deploy Configuration</b-button
         >
         <b-button class="level-item" icon-left="sync-alt" @click="checkCredentials(restartDatacollector)"
-          >Restart Datacollector</b-button
+          >Restart Data Collector</b-button
         >
         <b-button class="level-item" icon-left="sync-alt" @click="checkCredentials(restartDemo)">Restart Demo</b-button>
         <b-button
@@ -37,9 +37,9 @@
         </b-field>
       </div>
       <div class="column">
-        <p class="title is-4">Smartmeters</p>
+        <p class="title is-4">Smart Meters</p>
         <div class="block buttons">
-          <b-button type="is-success" icon-left="plus" @click="addReader">Smartmeter</b-button>
+          <b-button type="is-success" icon-left="plus" @click="addReader">Smart Meter</b-button>
         </div>
         <smart-meter
           v-for="(r, r_i) in readers"
@@ -236,7 +236,7 @@ export default {
         })
         .then(() => {
           this.$buefy.toast.open({
-            message: "Datacollector successfully restarted.",
+            message: "Data Collector successfully restarted.",
             type: "is-success",
             position: "is-top",
             duration: 4000,

@@ -1,0 +1,5 @@
+smartmeter-datacollector-configurator (0.2.2-1) unstable; urgency=low
+
+  * support building Debian source and binary packages for distribution on Debian Buster amd64 and raspios
+
+ -- Supercomputing Systems AG <info@scs.ch>  Thu, 02 Sep 2021 14:30:09 +0200
