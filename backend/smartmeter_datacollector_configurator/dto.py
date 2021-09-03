@@ -32,7 +32,7 @@ class ReaderDto(BaseModel):
     @classmethod
     def port_not_empty(cls, val: str):
         if not val.strip():
-            raise ValueError("Smartmeter port must not be empty.")
+            raise ValueError("Smart meter port must not be empty.")
         return val.strip()
 
 
