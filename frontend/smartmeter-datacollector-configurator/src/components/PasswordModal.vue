@@ -6,7 +6,7 @@
         <button type="button" class="delete" @click="$emit('close')" />
       </header>
       <section class="modal-card-body">
-        <b-field label="New Password">
+        <b-field label="New configurator password">
           <b-input
             type="password"
             v-model="newPassword"
@@ -16,7 +16,7 @@
             password-reveal
           ></b-input>
         </b-field>
-        <b-field label="Repeat new Password" :message="validationText">
+        <b-field label="Repeat password" :message="validationText">
           <b-input type="password" v-model="newPasswordRepeat" lazy password-reveal @input="checkInput"></b-input>
         </b-field>
       </section>

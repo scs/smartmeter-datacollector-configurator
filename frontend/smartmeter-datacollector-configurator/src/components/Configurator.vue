@@ -12,12 +12,14 @@
           >Restart Data Collector</b-button
         >
         <b-button class="level-item" icon-left="sync-alt" @click="checkCredentials(restartDemo)">Restart Demo</b-button>
-        <b-button
-          class="level-item"
-          icon-left="key"
-          @click="checkCredentials(changePasswordModal, 'Please enter current password.')"
-          >Change Password</b-button
-        >
+        <b-tooltip label="Set new configurator password">
+          <b-button
+            class="level-item"
+            icon-left="key"
+            @click="checkCredentials(changePasswordModal, 'Please enter current configurator password.')"
+            label="Change Password"
+          />
+        </b-tooltip>
       </div>
       <div class="level-right">
         <b-button class="level-item is-danger" icon-left="trash" @click="confirmDiscard"
@@ -113,7 +115,7 @@ export default {
     checkCredentials(action, message = null) {
       if (!this.credentials) {
         this.$buefy.dialog.prompt({
-          message: message || "Please enter password.",
+          message: message || "Please enter configurator password.",
           inputAttrs: {
             placeholder: "Password",
             type: "password",
