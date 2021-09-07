@@ -1,7 +1,7 @@
 import configparser
 import logging
 
-from .dto import ConfigDto, LoggerSinkDto, MqttSinkDto, ReaderDto, SinkType
+from .dto import ConfigDto, LoggerSinkDto, MeterDto, MqttSinkDto, SinkType
 
 CA_FILE_NAME = "ca.crt"
 CONFIG_FILE_NAME = "datacollector.ini"
@@ -18,7 +18,7 @@ def retrieve_config(config_dir: str) -> ConfigDto:
     dto = ConfigDto()
     for sec in parser.sections():
         if sec.startswith("reader"):
-            dto.readers.append(ReaderDto.parse_obj(
+            dto.meters.append(MeterDto.parse_obj(
                 dict(parser.items(sec))
             ))
         elif sec.startswith("sink"):
@@ -42,10 +42,10 @@ def retrieve_config(config_dir: str) -> ConfigDto:
 
 def write_config_from_dto(config_dir: str, config: ConfigDto) -> None:
     parser = configparser.ConfigParser()
-    for i, reader in enumerate(config.readers):
+    for i, meter in enumerate(config.meters):
         sec_name = f"reader{i}"
         parser.add_section(sec_name)
-        parser[sec_name] = reader.dict(exclude_none=True)
+        parser[sec_name] = meter.dict(exclude_none=True)
     sinks = (config.mqtt_sink, config.logger_sink)
     for i, sink in enumerate(sinks):
         if not sink:

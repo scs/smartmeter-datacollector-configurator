@@ -7,7 +7,7 @@ from pydantic.class_validators import validator
 LOGGER_LEVEL = ["DEBUG", "INFO", "WARNING", "ERROR", "FATAL", "CRITICAL"]
 
 
-class ReaderType(str, Enum):
+class MeterType(str, Enum):
     LGE450 = "lge450"
 
 
@@ -23,8 +23,8 @@ class BaseModel(PydanticBaseModel):
         use_enum_values = True
 
 
-class ReaderDto(BaseModel):
-    type: ReaderType
+class MeterDto(BaseModel):
+    type: MeterType
     port: str
     key: Optional[str]
 
@@ -82,7 +82,7 @@ class LoggerSinkDto(BaseModel):
 
 class ConfigDto(BaseModel):
     log_level: str = "WARNING"
-    readers: List[ReaderDto] = []
+    meters: List[MeterDto] = []
     mqtt_sink: Optional[MqttSinkDto]
     logger_sink: Optional[LoggerSinkDto]
 
