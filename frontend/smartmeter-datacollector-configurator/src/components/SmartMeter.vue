@@ -29,7 +29,7 @@
 
 <script>
 import axios from "axios";
-import { getBaseHostUrl } from "../utils";
+import { getApiUrl } from "../utils";
 export default {
   props: {
     initConfig: {
@@ -63,7 +63,7 @@ export default {
     },
     loadPorts() {
       axios
-        .get(`${getBaseHostUrl()}/ttydevices`, {
+        .get(`${getApiUrl()}/ttydevices`, {
           timeout: 3000,
           responseType: "json",
         })

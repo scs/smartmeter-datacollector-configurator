@@ -84,7 +84,7 @@
 
 <script>
 import axios from "axios";
-import { getBaseHostUrl } from "../utils";
+import { getApiUrl } from "../utils";
 import LoggerSink from "./LoggerSink.vue";
 import MqttSink from "./MqttSink.vue";
 import SmartMeter from "./SmartMeter.vue";
@@ -199,7 +199,7 @@ export default {
     },
     loadConfig() {
       axios
-        .get(`${getBaseHostUrl()}/config`, {
+        .get(`${getApiUrl()}/config`, {
           timeout: 3000,
           responseType: "json",
           auth: this.getAuthentication(),
@@ -220,7 +220,7 @@ export default {
     deployConfig() {
       const configJson = JSON.stringify(this.packConfig());
       axios
-        .post(`${getBaseHostUrl()}/config`, configJson, {
+        .post(`${getApiUrl()}/config`, configJson, {
           timeout: 4000,
           auth: this.getAuthentication(),
         })
@@ -247,7 +247,7 @@ export default {
     },
     restartDatacollector() {
       axios
-        .post(`${getBaseHostUrl()}/restart`, null, {
+        .post(`${getApiUrl()}/restart`, null, {
           timeout: 6000,
           auth: this.getAuthentication(),
         })
@@ -271,7 +271,7 @@ export default {
     },
     restartDemo() {
       axios
-        .post(`${getBaseHostUrl()}/restart-demo`, null, {
+        .post(`${getApiUrl()}/restart-demo`, null, {
           timeout: 8000,
           auth: this.getAuthentication(),
         })
@@ -319,7 +319,7 @@ export default {
     },
     changePassword(newPassword) {
       axios
-        .post(`${getBaseHostUrl()}/credentials`, newPassword, {
+        .post(`${getApiUrl()}/credentials`, newPassword, {
           timeout: 4000,
           auth: this.getAuthentication(),
         })
