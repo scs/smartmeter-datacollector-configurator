@@ -2,16 +2,27 @@
   <div>
     <div class="level">
       <div class="level-left">
-        <b-button class="level-item" icon-left="upload" @click="checkCredentials(confirmLoad)"
-          >Load Configuration</b-button
-        >
-        <b-button class="level-item" icon-left="download" @click="checkCredentials(confirmDeploy)"
-          >Deploy Configuration</b-button
-        >
-        <b-button class="level-item" icon-left="sync-alt" @click="checkCredentials(restartDatacollector)"
-          >Restart Data Collector</b-button
-        >
-        <b-button class="level-item" icon-left="sync-alt" @click="checkCredentials(restartDemo)">Restart Demo</b-button>
+        <b-button
+          class="level-item"
+          icon-left="upload"
+          @click="checkCredentials(confirmLoad)"
+          label="Load Configuration"
+        />
+        <b-tooltip label="Deploy configuration and restart data collector">
+          <b-button
+            class="level-item"
+            icon-left="download"
+            @click="checkCredentials(confirmDeploy)"
+            label="Deploy Configuration"
+          />
+        </b-tooltip>
+        <b-button
+          class="level-item"
+          icon-left="sync-alt"
+          @click="checkCredentials(restartDatacollector)"
+          label="Restart Data Collector"
+        />
+        <b-button class="level-item" icon-left="sync-alt" @click="checkCredentials(restartDemo)" label="Restart Demo" />
         <b-tooltip label="Set new configurator password">
           <b-button
             class="level-item"
@@ -166,7 +177,8 @@ export default {
     confirmDeploy() {
       this.$buefy.dialog.confirm({
         title: "Deploy Configuration",
-        message: "Do you want to upload and deploy the configuration?",
+        message:
+          "Do you want to upload and deploy the configuration?<br />The Data Collector service will be restarted.",
         confirmText: "Upload",
         type: "is-warning",
         hasIcon: true,
@@ -219,6 +231,9 @@ export default {
             position: "is-top",
             duration: 4000,
           });
+        })
+        .then(() => {
+          this.restartDatacollector();
         })
         .catch((error) => {
           const message = this.parseError(error);
@@ -331,4 +346,8 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="css" scoped>
+.level-left .b-tooltip {
+  margin-right: 0.75rem;
+}
+</style>
