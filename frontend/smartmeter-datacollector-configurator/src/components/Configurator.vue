@@ -39,14 +39,14 @@
       <div class="column">
         <p class="title is-4">Smart Meters</p>
         <div class="block buttons">
-          <b-button type="is-success" icon-left="plus" @click="addReader">Smart Meter</b-button>
+          <b-button type="is-success" icon-left="plus" @click="addMeter">Smart Meter</b-button>
         </div>
         <smart-meter
-          v-for="(r, r_i) in readers"
+          v-for="(r, r_i) in meters"
           :key="r.id"
           :initConfig="r.config"
-          @remove="removeReader(r_i)"
-          @update="updateReader(r_i, $event)"
+          @remove="removeMeter(r_i)"
+          @update="updateMeter(r_i, $event)"
         />
       </div>
       <div class="column">
@@ -81,7 +81,7 @@ export default {
   data() {
     return {
       loggerLevel: "WARNING",
-      readers: [],
+      meters: [],
       loggerSink: null,
       mqttSink: null,
       credentials: null,
@@ -92,23 +92,23 @@ export default {
     this.USERNAME = "admin";
   },
   methods: {
-    addReader() {
-      this.readers.push({
-        id: this.getReaderId(),
+    addMeter() {
+      this.meters.push({
+        id: this.getMeterId(),
         config: {},
       });
     },
-    getReaderId() {
-      if (this.readers.length == 0) {
+    getMeterId() {
+      if (this.meters.length == 0) {
         return 1;
       }
-      return Math.max(...this.readers.map((r) => r.id)) + 1;
+      return Math.max(...this.meters.map((r) => r.id)) + 1;
     },
-    updateReader(index, newConfig) {
-      this.readers[index].config = newConfig;
+    updateMeter(index, newConfig) {
+      this.meters[index].config = newConfig;
     },
-    removeReader(index) {
-      this.readers.splice(index, 1);
+    removeMeter(index) {
+      this.meters.splice(index, 1);
     },
     checkCredentials(action, message = null) {
       if (!this.credentials) {
@@ -137,7 +137,7 @@ export default {
     },
     resetConfig() {
       this.loggerLevel = "WARNING";
-      this.readers = [];
+      this.meters = [];
       this.loggerSink = null;
       this.mqttSink = null;
     },
@@ -278,7 +278,7 @@ export default {
     },
     extractConfig(cfg) {
       this.loggerLevel = cfg["log_level"] || "WARNING";
-      this.readers = cfg["readers"].map((r, index) => {
+      this.meters = cfg["meters"].map((r, index) => {
         return { id: index, config: r };
       });
       this.mqttSink = cfg["mqtt_sink"] || null;
@@ -287,7 +287,7 @@ export default {
     packConfig() {
       return {
         log_level: this.loggerLevel,
-        readers: this.readers.map((r) => r.config),
+        meters: this.meters.map((r) => r.config),
         mqtt_sink: this.mqttSink,
         logger_sink: this.loggerSink,
       };
