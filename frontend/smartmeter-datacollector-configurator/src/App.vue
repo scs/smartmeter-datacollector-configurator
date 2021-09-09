@@ -9,16 +9,26 @@
       </div>
     </header>
     <configurator />
+    <footer class="footer has-background-white">
+      <p class="content has-text-centered">
+        <a :href="grafanaUrl" target="_blank">Grafana Web</a> -
+        <a href="https://github.com/scs/smartmeter-datacollector/wiki" target="_blank">Documentation</a> -
+        <a href="https://github.com/scs/smartmeter-datacollector" target="_blank">Source Code</a>
+      </p>
+    </footer>
   </div>
 </template>
 
 <script>
 import Configurator from "./components/Configurator.vue";
-
+import { getGrafanaUrl } from "./utils";
 export default {
   name: "App",
   components: {
     Configurator,
+  },
+  computed: {
+    grafanaUrl: getGrafanaUrl,
   },
 };
 </script>

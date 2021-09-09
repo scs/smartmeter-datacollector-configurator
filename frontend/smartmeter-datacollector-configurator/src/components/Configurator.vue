@@ -2,22 +2,35 @@
   <div>
     <div class="level">
       <div class="level-left">
-        <b-button class="level-item" icon-left="upload" @click="checkCredentials(confirmLoad)"
-          >Load Configuration</b-button
-        >
-        <b-button class="level-item" icon-left="download" @click="checkCredentials(confirmDeploy)"
-          >Deploy Configuration</b-button
-        >
-        <b-button class="level-item" icon-left="sync-alt" @click="checkCredentials(restartDatacollector)"
-          >Restart Data Collector</b-button
-        >
-        <b-button class="level-item" icon-left="sync-alt" @click="checkCredentials(restartDemo)">Restart Demo</b-button>
         <b-button
           class="level-item"
-          icon-left="key"
-          @click="checkCredentials(changePasswordModal, 'Please enter current password.')"
-          >Change Password</b-button
-        >
+          icon-left="upload"
+          @click="checkCredentials(confirmLoad)"
+          label="Load Configuration"
+        />
+        <b-tooltip label="Deploy configuration and restart data collector">
+          <b-button
+            class="level-item"
+            icon-left="download"
+            @click="checkCredentials(confirmDeploy)"
+            label="Deploy Configuration"
+          />
+        </b-tooltip>
+        <b-button
+          class="level-item"
+          icon-left="sync-alt"
+          @click="checkCredentials(restartDatacollector)"
+          label="Restart Data Collector"
+        />
+        <b-button class="level-item" icon-left="sync-alt" @click="checkCredentials(restartDemo)" label="Restart Demo" />
+        <b-tooltip label="Set new configurator password">
+          <b-button
+            class="level-item"
+            icon-left="key"
+            @click="checkCredentials(changePasswordModal, 'Please enter current configurator password.')"
+            label="Change Password"
+          />
+        </b-tooltip>
       </div>
       <div class="level-right">
         <b-button class="level-item is-danger" icon-left="trash" @click="confirmDiscard"
@@ -39,14 +52,14 @@
       <div class="column">
         <p class="title is-4">Smart Meters</p>
         <div class="block buttons">
-          <b-button type="is-success" icon-left="plus" @click="addReader">Smart Meter</b-button>
+          <b-button type="is-success" icon-left="plus" @click="addMeter">Smart Meter</b-button>
         </div>
         <smart-meter
-          v-for="(r, r_i) in readers"
+          v-for="(r, r_i) in meters"
           :key="r.id"
           :initConfig="r.config"
-          @remove="removeReader(r_i)"
-          @update="updateReader(r_i, $event)"
+          @remove="removeMeter(r_i)"
+          @update="updateMeter(r_i, $event)"
         />
       </div>
       <div class="column">
@@ -71,7 +84,7 @@
 
 <script>
 import axios from "axios";
-import { getBaseHostUrl } from "../utils";
+import { getApiUrl } from "../utils";
 import LoggerSink from "./LoggerSink.vue";
 import MqttSink from "./MqttSink.vue";
 import SmartMeter from "./SmartMeter.vue";
@@ -81,7 +94,7 @@ export default {
   data() {
     return {
       loggerLevel: "WARNING",
-      readers: [],
+      meters: [],
       loggerSink: null,
       mqttSink: null,
       credentials: null,
@@ -92,28 +105,28 @@ export default {
     this.USERNAME = "admin";
   },
   methods: {
-    addReader() {
-      this.readers.push({
-        id: this.getReaderId(),
+    addMeter() {
+      this.meters.push({
+        id: this.getMeterId(),
         config: {},
       });
     },
-    getReaderId() {
-      if (this.readers.length == 0) {
+    getMeterId() {
+      if (this.meters.length == 0) {
         return 1;
       }
-      return Math.max(...this.readers.map((r) => r.id)) + 1;
+      return Math.max(...this.meters.map((r) => r.id)) + 1;
     },
-    updateReader(index, newConfig) {
-      this.readers[index].config = newConfig;
+    updateMeter(index, newConfig) {
+      this.meters[index].config = newConfig;
     },
-    removeReader(index) {
-      this.readers.splice(index, 1);
+    removeMeter(index) {
+      this.meters.splice(index, 1);
     },
     checkCredentials(action, message = null) {
       if (!this.credentials) {
         this.$buefy.dialog.prompt({
-          message: message || "Please enter password.",
+          message: message || "Please enter configurator password.",
           inputAttrs: {
             placeholder: "Password",
             type: "password",
@@ -137,7 +150,7 @@ export default {
     },
     resetConfig() {
       this.loggerLevel = "WARNING";
-      this.readers = [];
+      this.meters = [];
       this.loggerSink = null;
       this.mqttSink = null;
     },
@@ -164,7 +177,8 @@ export default {
     confirmDeploy() {
       this.$buefy.dialog.confirm({
         title: "Deploy Configuration",
-        message: "Do you want to upload and deploy the configuration?",
+        message:
+          "Do you want to upload and deploy the configuration?<br />The Data Collector service will be restarted.",
         confirmText: "Upload",
         type: "is-warning",
         hasIcon: true,
@@ -185,7 +199,7 @@ export default {
     },
     loadConfig() {
       axios
-        .get(`${getBaseHostUrl()}/config`, {
+        .get(`${getApiUrl()}/config`, {
           timeout: 3000,
           responseType: "json",
           auth: this.getAuthentication(),
@@ -206,7 +220,7 @@ export default {
     deployConfig() {
       const configJson = JSON.stringify(this.packConfig());
       axios
-        .post(`${getBaseHostUrl()}/config`, configJson, {
+        .post(`${getApiUrl()}/config`, configJson, {
           timeout: 4000,
           auth: this.getAuthentication(),
         })
@@ -217,6 +231,9 @@ export default {
             position: "is-top",
             duration: 4000,
           });
+        })
+        .then(() => {
+          this.restartDatacollector();
         })
         .catch((error) => {
           const message = this.parseError(error);
@@ -230,7 +247,7 @@ export default {
     },
     restartDatacollector() {
       axios
-        .post(`${getBaseHostUrl()}/restart`, null, {
+        .post(`${getApiUrl()}/restart`, null, {
           timeout: 6000,
           auth: this.getAuthentication(),
         })
@@ -254,7 +271,7 @@ export default {
     },
     restartDemo() {
       axios
-        .post(`${getBaseHostUrl()}/restart-demo`, null, {
+        .post(`${getApiUrl()}/restart-demo`, null, {
           timeout: 8000,
           auth: this.getAuthentication(),
         })
@@ -278,7 +295,7 @@ export default {
     },
     extractConfig(cfg) {
       this.loggerLevel = cfg["log_level"] || "WARNING";
-      this.readers = cfg["readers"].map((r, index) => {
+      this.meters = cfg["meters"].map((r, index) => {
         return { id: index, config: r };
       });
       this.mqttSink = cfg["mqtt_sink"] || null;
@@ -287,7 +304,7 @@ export default {
     packConfig() {
       return {
         log_level: this.loggerLevel,
-        readers: this.readers.map((r) => r.config),
+        meters: this.meters.map((r) => r.config),
         mqtt_sink: this.mqttSink,
         logger_sink: this.loggerSink,
       };
@@ -302,7 +319,7 @@ export default {
     },
     changePassword(newPassword) {
       axios
-        .post(`${getBaseHostUrl()}/credentials`, newPassword, {
+        .post(`${getApiUrl()}/credentials`, newPassword, {
           timeout: 4000,
           auth: this.getAuthentication(),
         })
@@ -329,4 +346,8 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="css" scoped>
+.level-left .b-tooltip {
+  margin-right: 0.75rem;
+}
+</style>
