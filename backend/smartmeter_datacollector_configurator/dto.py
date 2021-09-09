@@ -2,6 +2,7 @@ from enum import Enum
 from typing import List, Optional
 
 from pydantic import BaseModel as PydanticBaseModel
+from pydantic import Field
 from pydantic.class_validators import validator
 
 LOGGER_LEVEL = ["DEBUG", "INFO", "WARNING", "ERROR", "FATAL", "CRITICAL"]
@@ -37,7 +38,7 @@ class MeterDto(BaseModel):
 
 
 class MqttSinkDto(BaseModel):
-    type = SinkType.MQTT
+    type = Field(SinkType.MQTT, const=True)
     host: str
     port: int = 1883
     tls: bool = False
@@ -69,7 +70,7 @@ class MqttSinkDto(BaseModel):
 
 
 class LoggerSinkDto(BaseModel):
-    type = SinkType.LOGGER
+    type = Field(SinkType.LOGGER, const=True)
     name: str = "DataLogger"
 
     @validator("name")

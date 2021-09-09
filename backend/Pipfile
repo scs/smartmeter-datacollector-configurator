@@ -18,6 +18,7 @@ setuptools = "*"
 stdeb = {version="*", markers="sys_platform == 'linux'"}
 twine = "*"
 wheel = "*"
+pytest = "*"
 
 [requires]
 python_version = "3.8"
@@ -37,3 +38,4 @@ lint = "pylint smartmeter_datacollector_configurator/"
 lint_check = "pylint smartmeter_datacollector_configurator/ --exit-zero"
 setup = "pipenv-setup sync"
 setup_check = "pipenv-setup check"
+test = "pytest"
