@@ -294,6 +294,10 @@ export default {
         });
     },
     extractConfig(cfg) {
+      if (typeof cfg === "string") {
+        // if not already parsed by axios
+        cfg = JSON.parse(cfg);
+      }
       this.loggerLevel = cfg["log_level"] || "WARNING";
       this.meters = cfg["meters"].map((r, index) => {
         return { id: index, config: r };
