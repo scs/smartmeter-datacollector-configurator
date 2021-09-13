@@ -1,3 +1,9 @@
+smartmeter-datacollector-configurator (0.4.1-1) unstable; urgency=low
+
+  * manually parse JSON string if axios hasn't done it yet
+
+ -- Supercomputing Systems AG <info@scs.ch>  Mon, 13 Sep 2021 11:19:02 +0200
+
 smartmeter-datacollector-configurator (0.4.0-1) unstable; urgency=low
 
   * add unit tests
