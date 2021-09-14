@@ -70,7 +70,6 @@ The following command line arguments are supported:
 * `isort` automatically re-orders the import statements using `isort`.
 * `lint_check` checks if the code follows the [`pylint`](https://pypi.org/project/pylint/) rules defined in `pyproject.toml`.
 * `lint` automatically adjust the code to follow the `pylint` rules defined in `pyproject.toml`.
-* `license` makes sure every Python (`*.py`) file contains the proper license header.
 * `build` builds a Python package which can be uploaded to [`PyPI`](https://pypi.org/project/smartmeter-datacollector/) using `twine`.
 * `build_check` uses `twine` to check if the built Python package will be accepted by `PiPI`.
 * `setup_check` checks whether the dependencies defined in `Pipfile` / `Pipfile.lock` are in sync with `setup.py`.
