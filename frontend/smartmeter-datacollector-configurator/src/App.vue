@@ -10,6 +10,18 @@
         <a href="https://github.com/scs/smartmeter-datacollector/wiki" target="_blank">Documentation</a> -
         <a href="https://github.com/scs/smartmeter-datacollector" target="_blank">Source Code</a>
       </p>
+      <p class="content has-text-centered">
+        Developed by
+        <a href="https://www.scs.ch/" target="_blank">
+          <img class="image is-32x32 is-inline mx-2" src="./assets/scs_logo.png" />
+          Supercomputing Systems AG
+        </a>
+        on behalf of and funded by
+        <a href="https://www.ekz.ch/" target="_blank">
+          <img class="image is-32x32 is-inline mx-2" src="./assets/ekz_logo.png" />
+          EKZ
+        </a>
+      </p>
     </footer>
   </div>
 </template>
