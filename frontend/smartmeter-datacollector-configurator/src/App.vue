@@ -1,12 +1,7 @@
 <template>
   <div id="app" class="container is-fluid">
-    <header class="level">
-      <div class="level-left">
-        <img class="image level-item is-128x128" alt="EKZ Logo" src="./assets/ekz_logo.png" />
-      </div>
-      <div class="level-right">
-        <div class="level-item subtitle is-4">Smart Meter Data Collector Configurator</div>
-      </div>
+    <header class="subtitle is-3">
+      <div>Smart Meter Data Collector Configurator</div>
     </header>
     <configurator />
     <footer class="footer has-background-white">
