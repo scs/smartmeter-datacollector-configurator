@@ -1,12 +1,7 @@
 <template>
   <div id="app" class="container is-fluid">
-    <header class="level">
-      <div class="level-left">
-        <img class="image level-item is-128x128" alt="EKZ Logo" src="./assets/ekz_logo.png" />
-      </div>
-      <div class="level-right">
-        <div class="level-item subtitle is-4">Smart Meter Data Collector Configurator</div>
-      </div>
+    <header class="subtitle is-3">
+      <div>Smart Meter Data Collector Configurator</div>
     </header>
     <configurator />
     <footer class="footer has-background-white">
@@ -14,6 +9,18 @@
         <a :href="grafanaUrl" target="_blank">Grafana Web</a> -
         <a href="https://github.com/scs/smartmeter-datacollector/wiki" target="_blank">Documentation</a> -
         <a href="https://github.com/scs/smartmeter-datacollector" target="_blank">Source Code</a>
+      </p>
+      <p class="content has-text-centered">
+        Developed by
+        <a href="https://www.scs.ch/" target="_blank">
+          <img class="image is-32x32 is-inline mx-2" src="./assets/scs_logo.png" />
+          Supercomputing Systems AG
+        </a>
+        on behalf of and funded by
+        <a href="https://www.ekz.ch/" target="_blank">
+          <img class="image is-32x32 is-inline mx-2" src="./assets/ekz_logo.png" />
+          EKZ
+        </a>
       </p>
     </footer>
   </div>
