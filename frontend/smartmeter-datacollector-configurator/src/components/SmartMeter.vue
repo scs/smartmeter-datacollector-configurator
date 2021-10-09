@@ -50,6 +50,7 @@ export default {
   created() {
     this.TYPES = {
       lge450: "L+G E450",
+      iskraam550: "Iskraemeco AM550",
     };
     this.update();
   },
