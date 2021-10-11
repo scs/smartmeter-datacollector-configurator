@@ -36,8 +36,8 @@ npm run build
 mkdir -p ${BACKEND_STATIC_DIR}
 cp -R ${FRONTEND_DIST_DIR}/* ${BACKEND_STATIC_DIR}/
 
-# copy LICENSE and README.md from the root directory
-cp ${ROOT_DIR}/{LICENSE,README.md} ${BACKEND_DIR}
+# copy LICENSE from the root directory
+cp ${ROOT_DIR}/LICENSE ${BACKEND_DIR}
 
 cd ${BACKEND_DIR}
 
@@ -45,7 +45,7 @@ cd ${BACKEND_DIR}
 echo "Building the Python package..."
 python setup.py -q sdist bdist_wheel
 
-# remove LICENSE and README.md
-rm ${BACKEND_DIR}/{LICENSE,README.md}
+# remove LICENSE
+rm ${BACKEND_DIR}/LICENSE
 
 echo "SUCCESS: Packages have been successfully built at dist/"

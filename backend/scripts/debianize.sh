@@ -6,8 +6,8 @@ set -e
 # delete previously generated debian directory
 rm -rf debian
 
-# copy LICENSE and README.md from the root directory
-cp ../{LICENSE,README.md} .
+# copy LICENSE from the root directory
+cp ../LICENSE .
 
 # create the debian directory
 python setup.py \
@@ -20,8 +20,8 @@ python setup.py \
     --build-depends="dh-systemd (>= 1.5)" \
     --recommends3="python3-smartmeter-datacollector"
 
-# remove LICENSE and README.md
-rm LICENSE README.md
+# remove LICENSE
+rm LICENSE
 
 # add Pre-Depends to debian/control for python3-pip
 sed -i 's/^\(Depends: \)/Pre-Depends: python3-pip\n\1/' debian/control
