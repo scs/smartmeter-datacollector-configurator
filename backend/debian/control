@@ -9,7 +9,7 @@ Homepage: https://github.com/scs/smartmeter-datacollector-configurator
 Package: python3-smartmeter-datacollector-configurator
 Architecture: all
 Pre-Depends: python3-pip
-Depends: ${misc:Depends}, ${python3:Depends}
+Depends: ${misc:Depends}, python3:any
 Recommends: python3-smartmeter-datacollector
 Description: Smart Meter Data Collector Configurator
  .
