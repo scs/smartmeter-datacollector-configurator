@@ -1,3 +1,10 @@
+smartmeter-datacollector-configurator (1.0.2-1) unstable; urgency=low
+
+  * update node version to 16 (LTS)
+  * update frontend & backend dependencies
+
+ -- Supercomputing Systems AG <info@scs.ch>  Fri, 08 Apr 2022 09:16:43 +0200
+
 smartmeter-datacollector-configurator (1.0.1-1) unstable; urgency=low
 
   * don't automatically determine Python package dependencies when building a Debian package
