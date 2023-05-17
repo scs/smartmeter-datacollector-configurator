@@ -88,7 +88,7 @@ async def restart_demo() -> List[str]:
 
 
 def retrieve_tty_devices() -> List[str]:
-    cmd = f"{LS_BIN} /dev/ttyUSB*"
+    cmd = f"{LS_BIN} /dev/serial/by-id/*"
     try:
         output = subprocess.run(cmd, shell=True, text=True, capture_output=True, check=True)
     except subprocess.CalledProcessError as ex:
