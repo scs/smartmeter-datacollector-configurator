@@ -16,8 +16,8 @@ python setup.py \
     --with-python3=true \
     --no-python2-scripts=true \
     --with-dh-systemd \
+    --build-depends="dh-python" \
     --compat=10 \
-    --build-depends="dh-systemd (>= 1.5)" \
     --recommends3="python3-smartmeter-datacollector"
 
 # remove LICENSE
@@ -32,7 +32,7 @@ sed -i 's/${python3:Depends}/python3:any/' debian/control
 # fix the debhelper compatibility level in debian/control
 sed -i 's/>= 9/>= 10/' debian/control
 
-PIP_REQUIREMENTS=$(pipenv lock -r)
+PIP_REQUIREMENTS=$(pipenv requirements)
 
 # write the debian/postinst file
 cat <<EOT >> debian/postinst

@@ -44,7 +44,7 @@ pipenv run <command>
 Inside the `virtualenv` run:
 
 ```
-python -m smartmeter-datacollector-configurator [-c <config_path>] [-s <static_path>] [-d]
+python -m smartmeter_datacollector_configurator [-c <config_path>] [-s <static_path>] [-d]
 ```
 
 Now, the backend is running on port `8000` listening to `127.0.0.1`. With the option `-d` hot-reloading and debug logs are enabled.
@@ -64,19 +64,19 @@ The following command line arguments are supported:
 ### Custom commands & workflows
 
 `smartmeter-datacollector-configurator` offers a few custom `pipenv run` commands to simplify certain development workflows:
+* `build_check` uses `twine` to check if the built Python package will be accepted by `PiPI`.
+* `build_deb` builds a Debian package for the current development plattform.
+* `build_srcdeb` builds a Debian source package which can be used to build a Debian (binary) package for any platform (e.g. using [`pbuilder`](https://pbuilder-docs.readthedocs.io/en/latest/usage.html))
+* `build` builds a Python package which can be uploaded to [`PyPI`](https://pypi.org/project/smartmeter-datacollector/) using `twine`.
+* `debianize` creates a `debian/` directory used to build Debian source / binary packages.
 * `format_check` checks if the code follows the [`autopep8`](https://pypi.org/project/autopep8/) code formatting rules.
 * `format` automatically adjusts the code to follow the `autopep8` code formatting rules.
 * `isort_check` checks if the order of the import statements is correct using [`isort`](https://pycqa.github.io/isort/).
 * `isort` automatically re-orders the import statements using `isort`.
 * `lint_check` checks if the code follows the [`pylint`](https://pypi.org/project/pylint/) rules defined in `pyproject.toml`.
 * `lint` automatically adjust the code to follow the `pylint` rules defined in `pyproject.toml`.
-* `build` builds a Python package which can be uploaded to [`PyPI`](https://pypi.org/project/smartmeter-datacollector/) using `twine`.
-* `build_check` uses `twine` to check if the built Python package will be accepted by `PiPI`.
 * `setup_check` checks whether the dependencies defined in `Pipfile` / `Pipfile.lock` are in sync with `setup.py`.
 * `setup` synchronizes the dependencies defined in `Pipfile` / `Pipfile.lock` with `setup.py`.
-* `debianize` creates a `debian/` directory used to build Debian source / binary packages.
-* `build_srcdeb` builds a Debian source package which can be used to build a Debian (binary) package for any platform (e.g. using [`pbuilder`](https://pbuilder-docs.readthedocs.io/en/latest/usage.html))
-* `build_deb` builds a Debian package for the current development plattform.
 
 Make sure to run `format_check` / `format`, `isort_check` / `isort`, `lint_check` / `lint`, `license`, `setup_check` / `setup` before committing changes to the repository to avoid unnecessary development cycles. `smartmeter-datacollector-configurator` uses [GitHub Actions](https://github.com/scs/smartmeter-datacollector-configurator/actions) to check if these rules apply. 
 

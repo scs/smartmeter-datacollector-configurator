@@ -11,7 +11,7 @@ The web interface is built with the [Vue.js 2.x](https://vuejs.org/) framework. 
 
 ### Project Setup
 
-Install [nodejs (version 14.x.x)](https://nodejs.org/en/) which also installs the Node Package Manager `npm`.
+Install latest LTS [nodejs (version 16.x.x)](https://nodejs.org/en/) which also installs the Node Package Manager `npm`.
 
 Setup the project running
 ```

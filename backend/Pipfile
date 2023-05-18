@@ -4,9 +4,9 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-starlette = "~=0.16.0"
-uvicorn = "~=0.15.0"
-pydantic = "~=1.8.2"
+starlette = "~=0.27.0"
+uvicorn = "~=0.22.0"
+pydantic = "~=1.10.7"
 
 [dev-packages]
 autopep8 = "*"
@@ -14,24 +14,22 @@ chardet = "*"
 isort = "*"
 pipenv-setup = "*"
 pylint = "*"
+pytest = "*"
 setuptools = "*"
 stdeb = {version="*", markers="sys_platform == 'linux'"}
 twine = "*"
+vistir = "~=0.6.1"
 wheel = "*"
-pytest = "*"
-
-[requires]
-python_version = "3.8"
 
 [scripts]
 build = "bash ./scripts/build.sh"
 build_check = "twine check dist/*"
-build_srcdeb = "bash ./scripts/build_srcdeb.sh"
 build_deb = "bash ./scripts/build_deb.sh"
+build_srcdeb = "bash ./scripts/build_srcdeb.sh"
 clean = "rm -rf build deb_dist dist smartmeter_datacollector_configurator/static smartmeter_datacollector_configurator.egg-info"
 debianize = "bash ./scripts/debianize.sh"
-format_check = "autopep8 --diff -r --aggressive smartmeter_datacollector_configurator/"
 format = "autopep8 --in-place  -r --aggressive smartmeter_datacollector_configurator/"
+format_check = "autopep8 --diff -r --aggressive smartmeter_datacollector_configurator/"
 isort = "isort ."
 isort_check = "isort --check ."
 lint = "pylint smartmeter_datacollector_configurator/"

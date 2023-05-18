@@ -10,7 +10,9 @@ LOGGER_LEVEL = ["DEBUG", "INFO", "WARNING", "ERROR", "FATAL", "CRITICAL"]
 
 class MeterType(str, Enum):
     LGE450 = "lge450"
+    LGE360 = "lge360"
     ISKRAAM550 = "iskraam550"
+    KAMSTRUP_HAN = "kamstrup_han"
 
 
 class SinkType(str, Enum):

@@ -3,7 +3,7 @@ name: Frontend code checks
 on:
   push:
     branches:
-      - '**'
+      - "**"
   pull_request:
     branches:
       - master
@@ -11,29 +11,25 @@ on:
 
 jobs:
   check_python_code:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     defaults:
       run:
         working-directory: frontend/smartmeter-datacollector-configurator
 
     name: Running frontend code checks
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 16
+          cache: "npm"
+          cache-dependency-path: frontend/smartmeter-datacollector-configurator/package-lock.json
 
-      - id: cache-npm
-        uses: actions/cache@v1
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: ${{ runner.os }}-npm-
       - name: Setup project with npm
         run: |
           npm ci --ignore-scripts
 
-      - name: Lint with ESLint 
+      - name: Lint with ESLint
         run: |
           npm run lint

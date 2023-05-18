@@ -50,7 +50,9 @@ export default {
   created() {
     this.TYPES = {
       lge450: "L+G E450",
+      lge360: "L+G E360",
       iskraam550: "Iskraemeco AM550",
+      kamstrup_han: "Kamstrup HAN",
     };
     this.update();
   },
