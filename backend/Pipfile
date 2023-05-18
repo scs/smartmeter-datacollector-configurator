@@ -21,9 +21,6 @@ twine = "*"
 vistir = "~=0.6.1"
 wheel = "*"
 
-[requires]
-python_version = "3.8"
-
 [scripts]
 build = "bash ./scripts/build.sh"
 build_check = "twine check dist/*"
