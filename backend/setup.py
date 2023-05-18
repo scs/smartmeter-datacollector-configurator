@@ -15,7 +15,7 @@ with open(path.join(here, "README.md"), encoding="utf-8") as f:
 setup(
     name="smartmeter-datacollector-configurator",
     version=__version__,
-    description="Smart Meter Data Collector",
+    description="Smart Meter Data Collector Configurator",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/scs/smartmeter-datacollector-configurator",
@@ -31,13 +31,13 @@ setup(
         "Development Status :: 5 - Production/Stable",
         "License :: OSI Approved :: BSD License",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "Typing :: Typed",
     ],
     license="BSD",
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     packages=find_packages(
         exclude=["contrib", "doc", "scripts", "static", "tests", "tests."]
     ),

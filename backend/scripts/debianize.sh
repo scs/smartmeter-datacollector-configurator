@@ -16,6 +16,7 @@ python setup.py \
     --with-python3=true \
     --no-python2-scripts=true \
     --with-dh-systemd \
+    --build-depends="dh-python" \
     --compat=10 \
     --recommends3="python3-smartmeter-datacollector"
 
