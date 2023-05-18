@@ -14,11 +14,12 @@ chardet = "*"
 isort = "*"
 pipenv-setup = "*"
 pylint = "*"
+pytest = "*"
 setuptools = "*"
 stdeb = {version="*", markers="sys_platform == 'linux'"}
 twine = "*"
+vistir = "~=0.6.1"
 wheel = "*"
-pytest = "*"
 
 [requires]
 python_version = "3.8"
