@@ -1,3 +1,13 @@
+smartmeter-datacollector-configurator (1.1.0-1) unstable; urgency=low
+
+  * add L+G E360 meter
+  * add Kamstrup HAN meter
+  * update frontend & backend dependencies
+  * add support for Python 3.10, remove Python 3.7 support
+  * upgrade deb build to bullseye (RPi & Debian) (no buster build anymore)
+
+ -- Supercomputing Systems AG <info@scs.ch>  Fri, 19 May 2023 10:09:36 +0200
+
 smartmeter-datacollector-configurator (1.0.2-1) unstable; urgency=low
 
   * update node version to 16 (LTS)
