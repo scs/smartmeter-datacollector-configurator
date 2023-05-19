@@ -13,13 +13,12 @@ For managing dependency packages and virtualenv [pipenv](https://pipenv.pypa.io/
 
 ### Requirements
 
-* Python >= 3.7
+* Python >= 3.8
 * [`pipenv`](https://pipenv.pypa.io/en/latest/)
 * Optional software packages (Debian / Ubuntu)
   * python3-all
   * debhelper
   * dh-python
-  * dh-systemd
 
 ### Project Setup
 

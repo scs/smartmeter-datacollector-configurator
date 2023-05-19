@@ -27,6 +27,8 @@ setup(
     },
     author="Supercomputing Systems AG",
     author_email="info@scs.ch",
+    maintainer="Supercomputing Systems AG",
+    maintainer_email="info@scs.ch",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "License :: OSI Approved :: BSD License",
