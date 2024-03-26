@@ -51,6 +51,7 @@ export default {
     this.TYPES = {
       lge450: "L+G E450",
       lge360: "L+G E360",
+      lge570: "L+G E570",
       iskraam550: "Iskraemeco AM550",
       kamstrup_han: "Kamstrup HAN",
     };
