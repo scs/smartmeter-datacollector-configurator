@@ -15,7 +15,7 @@ Install latest LTS [nodejs (version 16.x.x)](https://nodejs.org/en/) which also 
 
 Setup the project running
 ```
-npm install --dev
+npm install --include=dev
 ```
 inside the `frontend/smartmeter-datacollector-configurator` directory.
 
