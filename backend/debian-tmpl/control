@@ -1,0 +1,15 @@
+Source: #PACKAGE#
+Section: python
+Priority: optional
+Maintainer: #USERNAME# <#EMAIL#>
+Build-Depends: #BUILD_DEPS#
+Standards-Version: #POLICY#
+Homepage: https://github.com/scs/smartmeter-datacollector-configurator
+Rules-Requires-Root: no
+
+Package: #PACKAGE#
+Architecture: all
+Depends: python3 (>= 3.8), ${misc:Depends}, smartmeter-datacollector
+Description: Smart Meter Data Collector Configurator
+ .
+ The smartmeter-datacollector-configurator is a web application to simplify the process of generating a valid initial configuration for smartmeter-datacollector.

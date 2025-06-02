@@ -1,0 +1,12 @@
+#!/usr/bin/make -f
+# See debhelper(7) (uncomment to enable)
+# output every command that modifies files on the build system.
+#export DH_VERBOSE = 1
+
+PACKAGE = smartmeter-datacollector-configurator
+
+%:
+	dh $@
+
+override_dh_installsystemd:
+	dh_installsystemd --name=$(PACKAGE)
