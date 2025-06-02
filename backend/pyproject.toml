@@ -18,6 +18,10 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Typing :: Typed",
 ]
+include = [
+    { path = "smartmeter_datacollector_configurator/static/*", format = ["sdist", "wheel"] },
+    { path = "smartmeter_datacollector_configurator/static/*/*", format = ["sdist", "wheel"] }
+]
 
 [tool.poetry.urls]
 "Bug Reports" = "https://github.com/scs/smartmeter-datacollector-configurator/issues"
@@ -36,7 +40,6 @@ pydantic = "~=1.10.7"
 [tool.poetry.group.dev.dependencies]
 autopep8 = "*"
 isort = "*"
-licenseheaders = "*"
 poethepoet = "*"
 pylint = "*"
 pytest = "*"
@@ -51,7 +54,7 @@ build_py = "bash ./scripts/build_py.sh"
 build_shiv = "bash ./scripts/build_shiv.sh"
 build_deb = "bash ./scripts/build_deb.sh"
 build_srcdeb = "bash ./scripts/build_deb.sh source"
-clean = "rm -rf build dist deb_dist .pytest_cache static"
+clean = "rm -rf build dist deb_dist .pytest_cache smartmeter_datacollector_configurator/static"
 debianize = "bash ./scripts/debianize.sh"
 format = "autopep8 --in-place  -r --aggressive smartmeter_datacollector_configurator/"
 format_check = "autopep8 --diff -r --aggressive smartmeter_datacollector_configurator/"
