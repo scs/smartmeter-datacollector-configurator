@@ -1,8 +1,9 @@
 import argparse
 import logging
 import os
+from pathlib import Path
+from typing import Optional
 
-import pkg_resources
 import uvicorn
 from pydantic.error_wrappers import ValidationError
 from starlette.applications import Starlette
@@ -98,14 +99,18 @@ async def get_tty_devices(request):
     return JSONResponse(devices)
 
 
-def build_routes(static_file_path: str):
+def build_routes(static_file_path: Optional[Path]):
+    if static_file_path:
+        static_files = StaticFiles(directory=static_file_path, html=True)
+    else:
+        static_files = StaticFiles(packages=[(__name__, STATIC_DIR)], html=True)
     return [
         Route('/api/config', Configuration, methods=['GET', 'POST']),
         Route('/api/restart', restart_datacollector, methods=['POST']),
         Route('/api/restart-demo', restart_demo, methods=['POST']),
         Route('/api/credentials', set_credentials, methods=['POST']),
         Route('/api/ttydevices', get_tty_devices, methods=['GET']),
-        Mount('/', app=StaticFiles(directory=static_file_path, html=True))
+        Mount('/', app=static_files)
     ]
 
 
@@ -135,23 +140,11 @@ def parse_arguments():
     return parser.parse_args()
 
 
-def resolve_static(static_file_path: str) -> str:
+def resolve_static(static_file_path: str) -> Optional[Path]:
     static_path = None
     if static_file_path:
-        static_path = static_file_path
-    else:
-        # try to find a packaged resource
-        if pkg_resources.resource_exists(__name__, STATIC_DIR):
-            manager = pkg_resources.ResourceManager()
-            provider = pkg_resources.get_provider(__name__)
-            static_path = provider.get_resource_filename(manager, STATIC_DIR)
-
-        if not static_path:
-            # fallback to a local static directory
-            static_path = STATIC_DIR
-
-    static_path = os.path.normpath(static_path)
-    LOGGER.info("Serving static files from %s.", static_path)
+        static_path = Path.resolve(Path(static_file_path))
+        LOGGER.info("Serving static files from %s.", static_path)
 
     return static_path
 
