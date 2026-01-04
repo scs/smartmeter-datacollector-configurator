@@ -8,7 +8,7 @@ LOGGER = logging.getLogger("uvicorn.error")
 SYSCTL_BIN = "/bin/systemctl"
 LS_BIN = "/bin/ls"
 
-DATACOL_SERVICE = "python3-smartmeter-datacollector"
+DATACOL_SERVICE = "smartmeter-datacollector"
 
 # Demo services
 BROKER_SERVICE = "mosquitto"
