@@ -1,10 +1,10 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: #PACKAGE#
+Upstream-Name: smartmeter-datacollector-configurator
 Upstream-Contact: #USERNAME# <#EMAIL#>
 Source: https://github.com/scs/smartmeter-datacollector-configurator
 
 Files: *
-Copyright: #YEAR# #USERNAME# <#EMAIL#>
+Copyright: 2025 Supercomputing Systems AG <info@scs.ch>
 License: BSD-3-Clause
 
 Files: debian/*
