@@ -63,15 +63,15 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: smartmeter-datacollector-configurator-${{ matrix.arch }}-deb
-          path: deb_dist/*.deb
+          path: backend/deb_dist/*.deb
       - name: Archive the additional Debian package files
         uses: actions/upload-artifact@v4
         with:
           name: smartmeter-datacollector-configurator-${{ matrix.arch }}-packagefiles
           path: |
-            deb_dist/*.buildinfo
-            deb_dist/*.changes
-            deb_dist/*.tar.*
+            backend/deb_dist/*.buildinfo
+            backend/deb_dist/*.changes
+            backend/deb_dist/*.tar.*
 
       - name: Get the tag name
         id: tagName
