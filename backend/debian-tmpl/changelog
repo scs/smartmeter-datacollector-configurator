@@ -1,3 +1,13 @@
+smartmeter-datacollector-configurator (1.3.0-1) unstable; urgency=low
+
+  * migrate to Poetry
+  * rework deb packaging using .pyz bundle instead of pip workaround
+  * backend: replace pkg_resources to find static web app files (pkg_resources is deprecated)
+  * upgrade dependencies
+  * set Python 3.11 as default version (debian bookworm); however supporting Python [3.10,3.14]
+
+ -- Supercomputing Systems AG <info@scs.ch>  Wed, 14 Jan 2026 13:07:58 +0100
+
 smartmeter-datacollector-configurator (1.2.0-1) unstable; urgency=low
 
   * add L+G E570 meter

@@ -1,2 +1,0 @@
-include LICENSE
-recursive-include smartmeter_datacollector_configurator/static/ *

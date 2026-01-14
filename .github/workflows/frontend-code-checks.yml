@@ -11,19 +11,19 @@ on:
 
 jobs:
   check_python_code:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     defaults:
       run:
         working-directory: frontend/smartmeter-datacollector-configurator
 
     name: Running frontend code checks
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 16
-          cache: "npm"
+          cache: npm
           cache-dependency-path: frontend/smartmeter-datacollector-configurator/package-lock.json
 
       - name: Setup project with npm
