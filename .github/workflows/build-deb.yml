@@ -83,7 +83,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
-          artifacts: deb_dist/*.deb
+          artifacts:  backend/deb_dist/*.deb
           draft: true
           name: Smart Meter Data Collector Configurator ${{ steps.tagName.outputs.tag }}
           omitBody: true
