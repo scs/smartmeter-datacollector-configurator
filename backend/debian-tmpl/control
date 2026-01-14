@@ -8,7 +8,7 @@ Homepage: https://github.com/scs/smartmeter-datacollector-configurator
 Rules-Requires-Root: no
 
 Package: #PACKAGE#
-Architecture: all
+Architecture: amd64 arm64
 Depends: python3 (>= 3.8), ${misc:Depends}, smartmeter-datacollector
 Description: Smart Meter Data Collector Configurator
  .

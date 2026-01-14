@@ -4,7 +4,7 @@
 set -e
 
 # types are: full, source, binary, any, all
-BUILD_TYPE=all
+BUILD_TYPE=any
 if [[ "$#" -eq 1 ]]; then
     BUILD_TYPE=$1
 fi
