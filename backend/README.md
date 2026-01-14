@@ -7,36 +7,25 @@ The backend is written with Python3 and bases on the following frameworks and li
 * [Starlette](https://www.starlette.io/): ASGI framework/toolkit
 * [Pydantic](https://pydantic-docs.helpmanual.io/): Data validation and settings management using Python type hinting.
 
-For managing dependency packages and virtualenv [pipenv](https://pipenv.pypa.io/en/latest/) is used.
+For managing dependency packages and virtualenv [poetry](https://python-poetry.org/) is used.
 
 ## Development
 
 ### Requirements
 
-* Python >= 3.8
-* [`pipenv`](https://pipenv.pypa.io/en/latest/)
-* Optional software packages (Debian / Ubuntu)
-  * python3-all
+* Python >= 3.10, <= 3.14
+* [`poetry`](https://python-poetry.org/)
+* Optional software packages
   * debhelper
-  * dh-python
+  * dh-make
 
 ### Project Setup
 
 With
 ```
-pipenv install --dev
+poetry install
 ```
-a new `virtualenv` is set up and the listed (inclusive dev) dependencies in the Pipfile are installed.
-
-```
-pipenv shell
-```
-activates the created `virtualenv` and opens a shell inside.
-
-You can also run a command directly with:
-```
-pipenv run <command>
-```
+This will install all runtime and development dependencies for `smartmeter-datacollector-configurator` in a new virtual environment. Now you are ready to start working on the project.
 
 ### Running during development
 
@@ -62,21 +51,21 @@ The following command line arguments are supported:
 
 ### Custom commands & workflows
 
-`smartmeter-datacollector-configurator` offers a few custom `pipenv run` commands to simplify certain development workflows:
-* `build_check` uses `twine` to check if the built Python package will be accepted by `PiPI`.
-* `build_deb` builds a Debian package for the current development plattform.
-* `build_srcdeb` builds a Debian source package which can be used to build a Debian (binary) package for any platform (e.g. using [`pbuilder`](https://pbuilder-docs.readthedocs.io/en/latest/usage.html))
-* `build` builds a Python package which can be uploaded to [`PyPI`](https://pypi.org/project/smartmeter-datacollector/) using `twine`.
-* `debianize` creates a `debian/` directory used to build Debian source / binary packages.
-* `format_check` checks if the code follows the [`autopep8`](https://pypi.org/project/autopep8/) code formatting rules.
-* `format` automatically adjusts the code to follow the `autopep8` code formatting rules.
-* `isort_check` checks if the order of the import statements is correct using [`isort`](https://pycqa.github.io/isort/).
-* `isort` automatically re-orders the import statements using `isort`.
-* `lint_check` checks if the code follows the [`pylint`](https://pypi.org/project/pylint/) rules defined in `pyproject.toml`.
-* `lint` automatically adjust the code to follow the `pylint` rules defined in `pyproject.toml`.
-* `setup_check` checks whether the dependencies defined in `Pipfile` / `Pipfile.lock` are in sync with `setup.py`.
-* `setup` synchronizes the dependencies defined in `Pipfile` / `Pipfile.lock` with `setup.py`.
+`smartmeter-datacollector-configurator` offers a few custom `poetry run poe` commands to simplify certain development workflows:
+* `build_py` builds a Python package which can be uploaded to [`PyPI`](https://pypi.org/project/smartmeter-datacollector/)
+* `build_shiv` builds a self-contained zipapp (`.pyz`) including dependencies (but without interpreter) using [`shiv`](https://shiv.readthedocs.io)
+* `build_deb` builds a Debian package for the current development platform
+* `build_srcdeb` builds a Debian source package which can be used to build a Debian (binary) package for any platform
+* `clean` removes build output from the working directory
+* `debianize` creates a `debian/` directory used to build Debian source / binary packages
+* `format` automatically adjusts the code to follow the [`autopep8`](https://pypi.org/project/autopep8/) code formatting rules
+* `format_check` checks if the code follows the `autopep8` code formatting rules
+* `isort` automatically re-orders the import statements using `isort`
+* `isort_check` checks if the order of the import statements is correct using [`isort`](https://pycqa.github.io/isort/)
+* `lint` automatically adjust the code to follow the [`pylint`](https://pypi.org/project/pylint/) rules defined in `pyproject.toml`
+* `lint_check` checks if the code follows the `pylint` rules defined in `pyproject.toml`
+* `test` runs all unit tests using `pytest`
 
-Make sure to run `format_check` / `format`, `isort_check` / `isort`, `lint_check` / `lint`, `license`, `setup_check` / `setup` before committing changes to the repository to avoid unnecessary development cycles. `smartmeter-datacollector-configurator` uses [GitHub Actions](https://github.com/scs/smartmeter-datacollector-configurator/actions) to check if these rules apply. 
+Make sure to run `format_check` / `format`, `isort_check` / `isort`, `lint_check` / `lint`before committing changes to the repository to avoid unnecessary development cycles. `smartmeter-datacollector-configurator` uses [GitHub Actions](https://github.com/scs/smartmeter-datacollector-configurator/actions) to check if these rules apply. 
 
 Visit [Wiki - Creating a Release](https://github.com/scs/smartmeter-datacollector/wiki/Creating-a-Release) for further documentation about contributing.
