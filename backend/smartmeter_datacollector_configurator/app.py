@@ -19,9 +19,9 @@ from starlette.routing import Mount, Route
 from starlette.staticfiles import StaticFiles
 from starlette.types import ASGIApp
 
-from . import configurator, system
-from .authentication import AuthManager, BasicAuthBackend, SetPasswordError
-from .dto import ConfigDto, CredentialsDto
+from smartmeter_datacollector_configurator import configurator, system
+from smartmeter_datacollector_configurator.authentication import AuthManager, BasicAuthBackend, SetPasswordError
+from smartmeter_datacollector_configurator.dto import ConfigDto, CredentialsDto
 
 LOGGER = logging.getLogger("uvicorn.error")
 

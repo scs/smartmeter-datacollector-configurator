@@ -192,7 +192,7 @@ def test_credentials_dto_valid():
 
 def test_credentials_dto_invalid_pwd():
     with pytest.raises(ValueError):
-        CredentialsDto()
+        CredentialsDto()  # type: ignore
 
     with pytest.raises(ValueError):
         CredentialsDto(password="")

@@ -5,7 +5,7 @@ import logging
 from starlette.authentication import AuthCredentials, AuthenticationBackend, AuthenticationError, SimpleUser
 from starlette.requests import HTTPConnection
 
-from .dto import CredentialsDto
+from smartmeter_datacollector_configurator.dto import CredentialsDto
 
 LOGGER = logging.getLogger("uvicorn.error")
 

@@ -31,7 +31,7 @@ class BaseModel(PydanticBaseModel):
 class MeterDto(BaseModel):
     type: MeterType
     port: str
-    key: Optional[str]
+    key: Optional[str] = None
 
     @validator("port")
     @classmethod
@@ -42,14 +42,14 @@ class MeterDto(BaseModel):
 
 
 class MqttSinkDto(BaseModel):
-    type = Field(SinkType.MQTT, const=True)
+    type: SinkType = Field(default=SinkType.MQTT, const=True)
     host: str
     port: int = 1883
     tls: bool = False
-    ca_cert: Optional[str]
+    ca_cert: Optional[str] = None
     check_hostname: bool = True
-    password: Optional[str]
-    username: Optional[str]
+    password: Optional[str] = None
+    username: Optional[str] = None
 
     @validator("host")
     @classmethod
@@ -74,7 +74,7 @@ class MqttSinkDto(BaseModel):
 
 
 class LoggerSinkDto(BaseModel):
-    type = Field(SinkType.LOGGER, const=True)
+    type: SinkType = Field(default=SinkType.LOGGER, const=True)
     name: str = "DataLogger"
 
     @validator("name")
@@ -88,8 +88,8 @@ class LoggerSinkDto(BaseModel):
 class ConfigDto(BaseModel):
     log_level: str = "WARNING"
     meters: List[MeterDto] = []
-    mqtt_sink: Optional[MqttSinkDto]
-    logger_sink: Optional[LoggerSinkDto]
+    mqtt_sink: Optional[MqttSinkDto] = None
+    logger_sink: Optional[LoggerSinkDto] = None
 
     @validator("log_level")
     @classmethod

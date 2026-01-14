@@ -1,7 +1,7 @@
 import configparser
 import logging
 
-from .dto import ConfigDto, LoggerSinkDto, MeterDto, MqttSinkDto, SinkType
+from smartmeter_datacollector_configurator.dto import ConfigDto, LoggerSinkDto, MeterDto, MqttSinkDto, SinkType
 
 CA_FILE_NAME = "ca.crt"
 CONFIG_FILE_NAME = "datacollector.ini"
