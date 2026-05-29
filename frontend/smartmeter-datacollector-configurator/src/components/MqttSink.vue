@@ -35,6 +35,14 @@
     <b-field v-show="authEnabled" label-position="on-border" label="MQTT Password">
       <b-input type="password" v-model="password" required lazy password-reveal @input="update"></b-input>
     </b-field>
+    <b-field>
+      <b-checkbox v-model="rldspEnabled" :value="true" @input="update">
+        Use standardized MQTT topic and payload (VSE RL-DSP CH 2024)</b-checkbox
+      >
+    </b-field>
+    <b-field v-show="rldspEnabled" label-position="on-border" label="Group in MQTT-topic (optional)">
+      <b-input v-model="topicGroup" type="text" lazy @input="update"></b-input>
+    </b-field>
   </div>
 </template>
 
@@ -56,6 +64,8 @@ export default {
       authEnabled: this.initConfig.username != null,
       username: this.initConfig.username || "",
       password: this.initConfig.password || "",
+      topicGroup: this.initConfig.topic_group || "",
+      rldspEnabled: this.initConfig.type === "mqtt" ? false : true,
     };
   },
   created() {
@@ -64,7 +74,7 @@ export default {
   methods: {
     update() {
       this.$emit("update", {
-        type: "mqtt",
+        type: this.rldspEnabled ? "mqttrldsp" : "mqtt",
         host: this.host,
         port: this.port,
         tls: this.tls,
@@ -72,6 +82,7 @@ export default {
         check_hostname: this.checkHostname,
         username: this.authEnabled && this.username ? this.username : null,
         password: this.authEnabled && this.password ? this.password : null,
+        topic_group: this.topicGroup,
       });
     },
   },
