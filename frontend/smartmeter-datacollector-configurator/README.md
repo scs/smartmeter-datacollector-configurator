@@ -11,7 +11,7 @@ The web interface is built with the [Vue 3](https://vuejs.org/) framework. Addit
 
 ### Project Setup
 
-Install latest LTS [nodejs (version 18.x.x)](https://nodejs.org/en/) using nvm (node version manager) which also installs the Node Package Manager `npm`.
+Install latest LTS [nodejs (version 22.x.x)](https://nodejs.org/en/) using nvm (node version manager) which also installs the Node Package Manager `npm`.
 
 Activate the required node version (in `.nvmrc`) in the shell
 ```
