@@ -315,7 +315,6 @@ export default {
     },
     changePasswordModal() {
       this.$buefy.modal.open({
-        parent: this,
         component: PasswordModal,
         hasModalCard: true,
         events: { submit: this.changePassword },

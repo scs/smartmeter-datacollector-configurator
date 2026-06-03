@@ -1,4 +1,4 @@
-const devMode = process.env.NODE_ENV === "development";
+const devMode = import.meta.env.MODE === "development";
 const devApiPort = 8000;
 const prodApiPort = 8000;
 const apiPath = "/api";

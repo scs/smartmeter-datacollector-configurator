@@ -2,7 +2,7 @@
   <div class="block box">
     <p class="level title is-5">
       <span class="level-left">MQTT Sink</span>
-      <b-icon class="level-right" type="is-danger" icon="trash" @click.native.stop="$emit('remove')" />
+      <b-icon class="level-right" type="is-danger" icon="trash" @click.stop="$emit('remove')" />
     </p>
     <b-field label-position="on-border" label="Host (IP/Hostname)">
       <b-input v-model="host" type="text" required placeholder="localhost" lazy @input="update"></b-input>

@@ -1,15 +1,12 @@
-import Vue from "vue";
+import { createApp } from "vue";
 import App from "./App.vue";
 import Buefy from "buefy";
 import "@fortawesome/fontawesome-free/css/solid.css";
 import "@fortawesome/fontawesome-free/css/fontawesome.css";
-import "buefy/dist/buefy.min.css";
+import "buefy/dist/css/buefy.css";
 
-Vue.config.productionTip = false;
-Vue.use(Buefy, {
-  defaultIconPack: "fas",
-});
-
-new Vue({
-  render: (h) => h(App),
-}).$mount("#app");
+createApp(App)
+  .use(Buefy, {
+    defaultIconPack: "fas",
+  })
+  .mount("#app");
