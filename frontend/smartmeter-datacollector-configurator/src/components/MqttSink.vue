@@ -4,16 +4,16 @@
       <span class="level-left">MQTT Sink</span>
       <b-icon class="level-right" type="is-danger" icon="trash" @click.stop="$emit('remove')" />
     </p>
-    <b-field label-position="on-border" label="Host (IP/Hostname)">
+    <b-field label-position="inside" label="Host (IP/Hostname)">
       <b-input v-model="host" type="text" required placeholder="localhost" lazy @input="update"></b-input>
     </b-field>
-    <b-field label-position="on-border" label="Port">
+    <b-field label-position="inside" label="Port">
       <b-input v-model.number="port" required type="number" min="1" max="65535" @input="update"></b-input>
     </b-field>
     <b-field>
       <b-checkbox v-model="tls" :value="false" @input="update">Use TLS protected connection</b-checkbox>
     </b-field>
-    <b-field v-show="tls" label-position="on-border" label="CA Certificate (optional)">
+    <b-field v-show="tls" label-position="inside" label="CA Certificate (optional)">
       <b-input
         custom-class="is-family-monospace has-background-white-ter is-size-7"
         v-model="caCert"
@@ -28,10 +28,10 @@
     <b-field>
       <b-checkbox v-model="authEnabled" :value="false" @input="update">Use Authentication</b-checkbox>
     </b-field>
-    <b-field v-show="authEnabled" label-position="on-border" label="MQTT Username">
+    <b-field v-show="authEnabled" label-position="inside" label="MQTT Username">
       <b-input v-model="username" type="text" required lazy @input="update"></b-input>
     </b-field>
-    <b-field v-show="authEnabled" label-position="on-border" label="MQTT Password">
+    <b-field v-show="authEnabled" label-position="inside" label="MQTT Password">
       <b-input type="password" v-model="password" required lazy password-reveal @input="update"></b-input>
     </b-field>
     <b-field>
@@ -39,7 +39,7 @@
         Use standardized MQTT topic and payload (VSE RL-DSP CH 2024)</b-checkbox
       >
     </b-field>
-    <b-field v-show="rldspEnabled" label-position="on-border" label="Group in MQTT-topic (optional)">
+    <b-field v-show="rldspEnabled" label-position="inside" label="Group in MQTT-topic (optional)">
       <b-input v-model="topicGroup" type="text" lazy @input="update"></b-input>
     </b-field>
   </div>
