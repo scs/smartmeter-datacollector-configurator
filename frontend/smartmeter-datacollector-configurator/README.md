@@ -4,7 +4,6 @@
 
 The web interface is built with the [Vue 3](https://vuejs.org/) framework. Additionally, the following libraries and frameworks are used:
 * [Buefy](https://buefy.org/): Lightweight UI components for Vue based on Bulma.
-* [Axios](https://github.com/axios/axios): Promise based HTTP client for API to backend.
 * [Fontawesome Free](https://fontawesome.com/): Icon package.
 
 ## Development

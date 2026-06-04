@@ -28,8 +28,7 @@
 </template>
 
 <script>
-import axios from "axios";
-import { getApiUrl } from "../utils";
+import { getTtyDevices } from "../api";
 export default {
   props: {
     initConfig: {
@@ -66,13 +65,9 @@ export default {
       });
     },
     loadPorts() {
-      axios
-        .get(`${getApiUrl()}/ttydevices`, {
-          timeout: 3000,
-          responseType: "json",
-        })
-        .then((response) => {
-          this.availablePorts = response.data;
+      getTtyDevices()
+        .then((devices) => {
+          this.availablePorts = devices;
         })
         .catch(() => {
           this.$buefy.toast.open({
