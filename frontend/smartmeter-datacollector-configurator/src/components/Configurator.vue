@@ -6,30 +6,26 @@
           class="level-item"
           icon-left="upload"
           @click="checkCredentials(confirmLoad)"
-          label="Load Configuration"
-        />
+          label="Load Configuration" />
         <b-tooltip label="Deploy configuration and restart data collector">
           <b-button
             class="level-item"
             icon-left="download"
             @click="checkCredentials(confirmDeploy)"
-            label="Deploy Configuration"
-          />
+            label="Deploy Configuration" />
         </b-tooltip>
         <b-button
           class="level-item"
           icon-left="sync-alt"
           @click="checkCredentials(restartDatacollector)"
-          label="Restart Data Collector"
-        />
+          label="Restart Data Collector" />
         <b-button class="level-item" icon-left="sync-alt" @click="checkCredentials(restartDemo)" label="Restart Demo" />
         <b-tooltip label="Set new configurator password">
           <b-button
             class="level-item"
             icon-left="key"
             @click="checkCredentials(changePasswordModal, 'Please enter current configurator password.')"
-            label="Change Password"
-          />
+            label="Change Password" />
         </b-tooltip>
       </div>
       <div class="level-right">
@@ -59,8 +55,7 @@
           :key="r.id"
           :initConfig="r.config"
           @remove="removeMeter(r_i)"
-          @update="updateMeter(r_i, $event)"
-        />
+          @update="updateMeter(r_i, $event)" />
       </div>
       <div class="column">
         <p class="title is-4">Data Sinks</p>
@@ -74,8 +69,7 @@
           v-if="loggerSink"
           :initConfig="loggerSink"
           @update="loggerSink = $event"
-          @remove="loggerSink = null"
-        />
+          @remove="loggerSink = null" />
         <mqtt-sink v-if="mqttSink" :initConfig="mqttSink" @update="mqttSink = $event" @remove="mqttSink = null" />
       </div>
     </div>

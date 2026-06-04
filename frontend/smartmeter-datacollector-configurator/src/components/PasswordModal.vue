@@ -13,8 +13,7 @@
             required
             minlength="8"
             maxlength="30"
-            password-reveal
-          ></b-input>
+            password-reveal></b-input>
         </b-field>
         <b-field label="Repeat password" :message="validationText">
           <b-input type="password" v-model="newPasswordRepeat" lazy password-reveal @input="checkInput"></b-input>

@@ -20,8 +20,7 @@
         type="textarea"
         placeholder="PEM formatted certificate"
         lazy
-        @input="update"
-      ></b-input>
+        @input="update"></b-input>
     </b-field>
     <b-field v-show="caCert.trim()">
       <b-checkbox v-model="checkHostname" :value="true" @input="update">Check Hostname</b-checkbox>
