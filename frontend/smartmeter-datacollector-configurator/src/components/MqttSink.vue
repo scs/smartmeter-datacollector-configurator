@@ -36,6 +36,11 @@
     </b-field>
     <b-field>
       <b-checkbox v-model="rldspEnabled" @input="update">
+        Use standardized MQTT topic and payload (VSE RL-DSP CH 2024)
+        <p v-show="rldspEnabled" class="is-size-7 has-text-info">
+          Note: this format is incompatible with demo-application
+        </p>
+      </b-checkbox>
     </b-field>
     <b-field v-show="rldspEnabled" label-position="inside" label="Group in MQTT-topic (optional)">
       <b-input v-model="topicGroup" type="text" lazy @input="update"></b-input>
