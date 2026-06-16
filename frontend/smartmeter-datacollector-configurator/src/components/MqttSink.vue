@@ -11,7 +11,7 @@
       <b-input v-model.number="port" required type="number" min="1" max="65535" @input="update"></b-input>
     </b-field>
     <b-field>
-      <b-checkbox v-model="tls" :value="false" @input="update">Use TLS protected connection</b-checkbox>
+      <b-checkbox v-model="tls" @input="update">Use TLS protected connection</b-checkbox>
     </b-field>
     <b-field v-show="tls" label-position="inside" label="CA Certificate (optional)">
       <b-input
@@ -23,10 +23,10 @@
         @input="update"></b-input>
     </b-field>
     <b-field v-show="caCert.trim()">
-      <b-checkbox v-model="checkHostname" :value="true" @input="update">Check Hostname</b-checkbox>
+      <b-checkbox v-model="checkHostname" @input="update">Check Hostname</b-checkbox>
     </b-field>
     <b-field>
-      <b-checkbox v-model="authEnabled" :value="false" @input="update">Use Authentication</b-checkbox>
+      <b-checkbox v-model="authEnabled" @input="update">Use Authentication</b-checkbox>
     </b-field>
     <b-field v-show="authEnabled" label-position="inside" label="MQTT Username">
       <b-input v-model="username" type="text" required lazy @input="update"></b-input>
@@ -35,9 +35,7 @@
       <b-input type="password" v-model="password" required lazy password-reveal @input="update"></b-input>
     </b-field>
     <b-field>
-      <b-checkbox v-model="rldspEnabled" :value="true" @input="update">
-        Use standardized MQTT topic and payload (VSE RL-DSP CH 2024)</b-checkbox
-      >
+      <b-checkbox v-model="rldspEnabled" @input="update">
     </b-field>
     <b-field v-show="rldspEnabled" label-position="inside" label="Group in MQTT-topic (optional)">
       <b-input v-model="topicGroup" type="text" lazy @input="update"></b-input>
@@ -64,7 +62,7 @@ export default {
       username: this.initConfig.username || "",
       password: this.initConfig.password || "",
       topicGroup: this.initConfig.topic_group || "",
-      rldspEnabled: this.initConfig.type === "mqtt" ? false : true,
+      rldspEnabled: this.initConfig.type === "mqttrldsp" ? true : false,
     };
   },
   created() {
