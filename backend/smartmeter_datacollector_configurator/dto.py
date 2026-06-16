@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Optional
+from typing import List, Literal, Optional, Union
 
 from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Field
@@ -18,6 +18,7 @@ class MeterType(str, Enum):
 
 class SinkType(str, Enum):
     MQTT = "mqtt"
+    MQTT_RLDSP = "mqttrldsp"
     LOGGER = "logger"
 
 
@@ -42,7 +43,7 @@ class MeterDto(BaseModel):
 
 
 class MqttSinkDto(BaseModel):
-    type: SinkType = Field(default=SinkType.MQTT, const=True)
+    type: Literal[SinkType.MQTT, SinkType.MQTT_RLDSP] = SinkType.MQTT
     host: str
     port: int = 1883
     tls: bool = False
@@ -50,6 +51,7 @@ class MqttSinkDto(BaseModel):
     check_hostname: bool = True
     password: Optional[str] = None
     username: Optional[str] = None
+    topic_group: Optional[str] = None
 
     @validator("host")
     @classmethod
@@ -70,6 +72,13 @@ class MqttSinkDto(BaseModel):
     def username_password_exists(cls, val: str, values):
         if val and not values["password"]:
             raise ValueError("No password set for username.")
+        return val
+
+    @validator("topic_group")
+    @classmethod
+    def topic_group_is_alpha_num(cls, val: Optional[str]):
+        if val and not val.isalnum():
+            raise ValueError("Topic group must be alphanumeric if set.")
         return val
 
 

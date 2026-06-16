@@ -66,6 +66,11 @@ def test_mqtt_sink_dto_valid():
     })
 
     MqttSinkDto.parse_obj({
+        "type": SinkType.MQTT_RLDSP,
+        "host": "localhost",
+    })
+
+    MqttSinkDto.parse_obj({
         "host": "localhost",
         "port": 2000,
         "tls": True,
@@ -73,6 +78,7 @@ def test_mqtt_sink_dto_valid():
         "check_hostname": False,
         "password": "PWD",
         "username": "USER",
+        "topic_group": "TESTGROUP123"
     })
 
 
@@ -124,6 +130,20 @@ def test_mqtt_sink_dto_invalid_missing_password():
         MqttSinkDto.parse_obj({
             "host": "localhost",
             "username": "user",
+        })
+
+
+def test_mqtt_sink_dto_invalid_topic_group():
+    with pytest.raises(ValueError):
+        MqttSinkDto.parse_obj({
+            "host": "localhost",
+            "topic_group": "Invalid Group!",
+        })
+
+    with pytest.raises(ValueError):
+        MqttSinkDto.parse_obj({
+            "host": "localhost",
+            "topic_group": "Group With Spaces",
         })
 
 
