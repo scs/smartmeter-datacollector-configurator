@@ -16,7 +16,7 @@
             password-reveal></b-input>
         </b-field>
         <b-field label="Repeat password" :message="validationText">
-          <b-input type="password" v-model="newPasswordRepeat" lazy password-reveal @input="checkInput"></b-input>
+          <b-input type="password" v-model="newPasswordRepeat" lazy password-reveal></b-input>
         </b-field>
       </section>
       <footer class="modal-card-foot">
@@ -35,6 +35,14 @@ export default {
       newPasswordRepeat: "",
       validationText: null,
     };
+  },
+  watch: {
+    newPassword() {
+      this.checkInput();
+    },
+    newPasswordRepeat() {
+      this.checkInput();
+    },
   },
   methods: {
     checkInput() {

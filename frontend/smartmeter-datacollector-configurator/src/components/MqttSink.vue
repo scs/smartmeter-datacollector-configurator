@@ -5,13 +5,13 @@
       <b-icon class="level-right" type="is-danger" icon="trash" @click.stop="$emit('remove')" />
     </p>
     <b-field label-position="inside" label="Host (IP/Hostname)">
-      <b-input v-model="host" type="text" required placeholder="localhost" lazy @input="update"></b-input>
+      <b-input v-model="host" type="text" required placeholder="localhost" lazy></b-input>
     </b-field>
     <b-field label-position="inside" label="Port">
-      <b-input v-model.number="port" required type="number" min="1" max="65535" @input="update"></b-input>
+      <b-input v-model.number="port" required type="number" min="1" max="65535"></b-input>
     </b-field>
     <b-field>
-      <b-checkbox v-model="tls" @input="update">Use TLS protected connection</b-checkbox>
+      <b-checkbox v-model="tls">Use TLS protected connection</b-checkbox>
     </b-field>
     <b-field v-show="tls" label-position="inside" label="CA Certificate (optional)">
       <b-input
@@ -19,23 +19,22 @@
         v-model="caCert"
         type="textarea"
         placeholder="PEM formatted certificate"
-        lazy
-        @input="update"></b-input>
+        lazy></b-input>
     </b-field>
     <b-field v-show="caCert.trim()">
-      <b-checkbox v-model="checkHostname" @input="update">Check Hostname</b-checkbox>
+      <b-checkbox v-model="checkHostname">Check Hostname</b-checkbox>
     </b-field>
     <b-field>
-      <b-checkbox v-model="authEnabled" @input="update">Use Authentication</b-checkbox>
+      <b-checkbox v-model="authEnabled">Use Authentication</b-checkbox>
     </b-field>
     <b-field v-show="authEnabled" label-position="inside" label="MQTT Username">
-      <b-input v-model="username" type="text" required lazy @input="update"></b-input>
+      <b-input v-model="username" type="text" required lazy></b-input>
     </b-field>
     <b-field v-show="authEnabled" label-position="inside" label="MQTT Password">
-      <b-input type="password" v-model="password" required lazy password-reveal @input="update"></b-input>
+      <b-input type="password" v-model="password" required lazy password-reveal></b-input>
     </b-field>
     <b-field>
-      <b-checkbox v-model="rldspEnabled" @input="update">
+      <b-checkbox v-model="rldspEnabled">
         Use standardized MQTT topic and payload (VSE RL-DSP CH 2024)
         <p v-show="rldspEnabled" class="is-size-7 has-text-info">
           Note: this format is incompatible with demo-application
@@ -43,7 +42,7 @@
       </b-checkbox>
     </b-field>
     <b-field v-show="rldspEnabled" label-position="inside" label="Group in MQTT-topic (optional)">
-      <b-input v-model="topicGroup" type="text" lazy @input="update"></b-input>
+      <b-input v-model="topicGroup" type="text" lazy></b-input>
     </b-field>
   </div>
 </template>
@@ -70,12 +69,9 @@ export default {
       rldspEnabled: this.initConfig.type === "mqttrldsp" ? true : false,
     };
   },
-  created() {
-    this.update();
-  },
-  methods: {
-    update() {
-      this.$emit("update", {
+  computed: {
+    config() {
+      return {
         type: this.rldspEnabled ? "mqttrldsp" : "mqtt",
         host: this.host,
         port: this.port,
@@ -85,7 +81,15 @@ export default {
         username: this.authEnabled && this.username ? this.username : null,
         password: this.authEnabled && this.password ? this.password : null,
         topic_group: this.topicGroup,
-      });
+      };
+    },
+  },
+  watch: {
+    config: {
+      handler(value) {
+        this.$emit("update", value);
+      },
+      immediate: true,
     },
   },
 };

@@ -5,15 +5,15 @@
       <b-icon class="level-right" type="is-danger" icon="trash" @click.stop="$emit('remove')" />
     </p>
     <b-field label-position="inside" label="Type">
-      <b-select v-model="type" expanded placeholder="Select a smartmeter" @input="update">
+      <b-select v-model="type" expanded placeholder="Select a smartmeter">
         <option v-for="(name, typeKey) in TYPES" :value="typeKey" :key="typeKey">{{ name }}</option>
       </b-select>
     </b-field>
     <b-field v-show="customPort" label-position="inside" label="Port/Device">
-      <b-input v-model="port" type="text" required placeholder="/dev/ttyUSB0" lazy @input="update"></b-input>
+      <b-input v-model="port" type="text" required placeholder="/dev/ttyUSB0" lazy></b-input>
     </b-field>
     <b-field v-show="!customPort" grouped label-position="inside" label="TTY USB Devices">
-      <b-select v-model="port" expanded @input="update">
+      <b-select v-model="port" expanded>
         <option v-for="port in availablePorts" :value="port" :key="port">{{ port }}</option>
       </b-select>
       <b-button icon-right="sync-alt" @click="loadPorts" />
@@ -22,7 +22,7 @@
       <b-checkbox v-model="customPort">Enter custom port</b-checkbox>
     </b-field>
     <b-field label-position="inside" label="Decryption Key (optional)">
-      <b-input v-model="key" type="text" lazy @input="update"></b-input>
+      <b-input v-model="key" type="text" lazy></b-input>
     </b-field>
   </div>
 </template>
@@ -54,16 +54,25 @@ export default {
       iskraam550: "Iskraemeco AM550",
       kamstrup_han: "Kamstrup HAN",
     };
-    this.update();
   },
-  methods: {
-    update() {
-      this.$emit("update", {
+  computed: {
+    config() {
+      return {
         type: this.type,
         port: this.port,
         key: this.key || null,
-      });
+      };
     },
+  },
+  watch: {
+    config: {
+      handler(value) {
+        this.$emit("update", value);
+      },
+      immediate: true,
+    },
+  },
+  methods: {
     loadPorts() {
       getTtyDevices()
         .then((devices) => {
