@@ -1,77 +1,76 @@
 import pytest
-from pydantic import ValidationError
 
 from smartmeter_datacollector_configurator.dto import (ConfigDto, CredentialsDto, LoggerSinkDto, MeterDto, MeterType,
                                                        MqttSinkDto, SinkType)
 
 
 def test_meter_dto_valid():
-    MeterDto.model_validate({
+    MeterDto.parse_obj({
         "type": MeterType.LGE450,
         "port": "/dev/port",
         "key": "KEY"
     })
 
-    MeterDto.model_validate({
+    MeterDto.parse_obj({
         "type": "lge450",
         "port": "/dev/port",
         "key": "KEY",
     })
 
-    MeterDto.model_validate({
+    MeterDto.parse_obj({
         "type": MeterType.LGE450,
         "port": "/dev/port",
     })
 
 
 def test_meter_dto_invalid_type():
-    with pytest.raises(ValidationError):
-        MeterDto.model_validate({
+    with pytest.raises(ValueError):
+        MeterDto.parse_obj({
             "type": "invalid_meter",
             "port": "/dev/port",
         })
 
-    with pytest.raises(ValidationError):
-        MeterDto.model_validate({
+    with pytest.raises(ValueError):
+        MeterDto.parse_obj({
             "type": "",
             "port": "/dev/port",
         })
 
-    with pytest.raises(ValidationError):
-        MeterDto.model_validate({
+    with pytest.raises(ValueError):
+        MeterDto.parse_obj({
             "port": "/dev/port",
         })
 
 
 def test_meter_dto_invalid_port():
-    with pytest.raises(ValidationError):
-        MeterDto.model_validate({
+    with pytest.raises(ValueError):
+        MeterDto.parse_obj({
             "type": MeterType.LGE450,
             "port": "",
         })
 
-    with pytest.raises(ValidationError):
-        MeterDto.model_validate({
+    with pytest.raises(ValueError):
+        MeterDto.parse_obj({
             "type": MeterType.LGE450,
         })
 
 
 def test_mqtt_sink_dto_valid():
-    MqttSinkDto.model_validate({
+    MqttSinkDto.parse_obj({
         "host": "localhost",
     })
 
-    MqttSinkDto.model_validate({
+    MqttSinkDto.parse_obj({
         "type": SinkType.MQTT,
         "host": "localhost",
     })
 
-    MqttSinkDto.model_validate({
+    MqttSinkDto.parse_obj({
         "type": SinkType.MQTT_RLDSP,
         "host": "localhost",
     })
 
-    MqttSinkDto.model_validate({
+    MqttSinkDto.parse_obj({
         "host": "localhost",
         "port": 2000,
         "tls": True,
@@ -84,110 +83,110 @@ def test_mqtt_sink_dto_valid():
 
 
 def test_mqtt_sink_dto_invalid_type():
-    with pytest.raises(ValidationError):
-        MqttSinkDto.model_validate({
+    with pytest.raises(ValueError):
+        MqttSinkDto.parse_obj({
             "type": SinkType.LOGGER,
             "host": "localhost",
         })
 
 
 def test_mqtt_sink_dto_invalid_host():
-    with pytest.raises(ValidationError):
-        MqttSinkDto.model_validate({
+    with pytest.raises(ValueError):
+        MqttSinkDto.parse_obj({
             "host": " ",
         })
 
-    with pytest.raises(ValidationError):
-        MqttSinkDto.model_validate({
+    with pytest.raises(ValueError):
+        MqttSinkDto.parse_obj({
             "host": "",
         })
 
-    with pytest.raises(ValidationError):
-        MqttSinkDto.model_validate({})
+    with pytest.raises(ValueError):
+        MqttSinkDto.parse_obj({})
 
 
 def test_mqtt_sink_dto_invalid_port():
-    with pytest.raises(ValidationError):
-        MqttSinkDto.model_validate({
+    with pytest.raises(ValueError):
+        MqttSinkDto.parse_obj({
             "host": "localhost",
             "port": 0,
         })
 
-    with pytest.raises(ValidationError):
-        MqttSinkDto.model_validate({
+    with pytest.raises(ValueError):
+        MqttSinkDto.parse_obj({
             "host": "localhost",
             "port": -3,
         })
 
-    with pytest.raises(ValidationError):
-        MqttSinkDto.model_validate({
+    with pytest.raises(ValueError):
+        MqttSinkDto.parse_obj({
             "host": "localhost",
             "port": 65555,
         })
 
 
 def test_mqtt_sink_dto_invalid_missing_password():
-    with pytest.raises(ValidationError):
-        MqttSinkDto.model_validate({
+    with pytest.raises(ValueError):
+        MqttSinkDto.parse_obj({
             "host": "localhost",
             "username": "user",
         })
 
 
 def test_mqtt_sink_dto_invalid_topic_group():
-    with pytest.raises(ValidationError):
-        MqttSinkDto.model_validate({
+    with pytest.raises(ValueError):
+        MqttSinkDto.parse_obj({
             "host": "localhost",
             "topic_group": "Invalid Group!",
         })
 
-    with pytest.raises(ValidationError):
-        MqttSinkDto.model_validate({
+    with pytest.raises(ValueError):
+        MqttSinkDto.parse_obj({
             "host": "localhost",
             "topic_group": "Group With Spaces",
         })
 
 
 def test_logger_sink_dto_valid():
-    LoggerSinkDto.model_validate({
+    LoggerSinkDto.parse_obj({
         "name": "TestLogger",
     })
 
-    LoggerSinkDto.model_validate({
+    LoggerSinkDto.parse_obj({
         "type": SinkType.LOGGER,
         "name": "TestLogger",
     })
 
-    LoggerSinkDto.model_validate({})
+    LoggerSinkDto.parse_obj({})
 
 
 def test_logger_sink_dto_invalid_name():
-    with pytest.raises(ValidationError):
-        LoggerSinkDto.model_validate({
+    with pytest.raises(ValueError):
+        LoggerSinkDto.parse_obj({
             "name": "",
         })
 
 
 def test_logger_sink_dto_invalid_type():
-    with pytest.raises(ValidationError):
-        LoggerSinkDto.model_validate({
+    with pytest.raises(ValueError):
+        LoggerSinkDto.parse_obj({
             "type": SinkType.MQTT,
         })
 
 
 def test_config_dto_valid():
-    ConfigDto.model_validate({})
+    ConfigDto.parse_obj({})
 
-    meter_dto = MeterDto.model_validate({
+    meter_dto = MeterDto.parse_obj({
         "type": MeterType.LGE450,
         "port": "/dev/port",
     })
 
-    ConfigDto.model_validate({
+    ConfigDto.parse_obj({
         "log_level": "info ",
     })
 
-    ConfigDto.model_validate({
+    ConfigDto.parse_obj({
         "log_level": "INFO",
         "meters": [
             meter_dto
@@ -198,8 +197,8 @@ def test_config_dto_valid():
 
 
 def test_config_dto_invalid_logger_level():
-    with pytest.raises(ValidationError):
-        ConfigDto.model_validate({
+    with pytest.raises(ValueError):
+        ConfigDto.parse_obj({
             "log_level": "INEXISTENT_LEVEL",
         })
 
@@ -212,17 +211,17 @@ def test_credentials_dto_valid():
 
 
 def test_credentials_dto_invalid_pwd():
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         CredentialsDto()  # type: ignore
 
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         CredentialsDto(password="")
 
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         CredentialsDto(password=" ")
 
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         CredentialsDto(password="1234567")
 
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         CredentialsDto(password="1234554321123455432112345543211")

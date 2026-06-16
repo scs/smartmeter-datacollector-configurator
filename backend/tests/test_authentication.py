@@ -40,4 +40,4 @@ def test_auth_raise_error_if_unable_to_write():
     with unittest.mock.patch('smartmeter_datacollector_configurator.authentication.open') as open_mock:
         open_mock.side_effect = OSError()
         with pytest.raises(SetPasswordError):
-            AuthManager("/some/path")
+            manager = AuthManager("/some/path")

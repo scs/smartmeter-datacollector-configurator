@@ -18,7 +18,7 @@ classifiers = [
 ]
 requires-python = ">=3.10,<4.0"
 dependencies = [
-    "pydantic (~=2.13)",
+    "pydantic (~=1.10.7)",
     "starlette (~=0.37)",
     "uvicorn (~=0.29)",
 ]

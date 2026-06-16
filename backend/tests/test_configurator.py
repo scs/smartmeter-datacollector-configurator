@@ -8,8 +8,8 @@ import smartmeter_datacollector_configurator.configurator as configurator
 from smartmeter_datacollector_configurator.dto import ConfigDto, MeterDto, MeterType, MqttSinkDto
 
 
-@pytest.fixture(name="cfg_basic")
-def fixture_cfg_basic() -> Dict[str, Any]:
+@pytest.fixture
+def cfg_basic() -> Dict[str, Any]:
     return {
         "reader0": {
             "type": "lge450",
@@ -25,16 +25,16 @@ def fixture_cfg_basic() -> Dict[str, Any]:
     }
 
 
-@pytest.fixture(name="cfg_tls")
-def fixture_cfg_tls(cfg_basic) -> Dict[str, Any]:
+@pytest.fixture
+def cfg_tls(cfg_basic) -> Dict[str, Any]:
     cfg_basic["sink0"]["port"] = "8883"
     cfg_basic["sink0"]["tls"] = "True"
     cfg_basic["sink0"]["check_hostname"] = "True"
     return cfg_basic
 
 
-@pytest.fixture(name="cfg_with_ca")
-def fixture_cfg_with_ca(cfg_tls, tmp_path: Path) -> Dict[str, Any]:
+@pytest.fixture
+def cfg_with_ca(cfg_tls, tmp_path: Path) -> Dict[str, Any]:
     cfg_tls["sink0"]["check_hostname"] = False
     cfg_tls["sink0"]["ca_file_path"] = str(tmp_path / configurator.CA_FILE_NAME)
     return cfg_tls
@@ -120,11 +120,11 @@ def test_retrieve_config_ignore_inexistent_ca_cert(cfg_with_ca: Dict[str, Any], 
 def test_write_config_to_file(cfg_tls: Dict[str, Any], tmp_path: Path):
     file_path = tmp_path / configurator.CONFIG_FILE_NAME
 
-    dto = ConfigDto.model_validate({
+    dto = ConfigDto.parse_obj({
         "meters": [
-            MeterDto.model_validate(cfg_tls["reader0"])
+            MeterDto.parse_obj(cfg_tls["reader0"])
         ],
-        "mqtt_sink": MqttSinkDto.model_validate(cfg_tls["sink0"]),
+        "mqtt_sink": MqttSinkDto.parse_obj(cfg_tls["sink0"]),
         "log_level": cfg_tls["logging"]["default"]
     })
 
@@ -151,8 +151,8 @@ def test_write_config_with_ca_cert_to_file(cfg_with_ca: Dict[str, Any], tmp_path
     ca_file_path = tmp_path / configurator.CA_FILE_NAME
     TEST_CA = "123456789123456789ABCDEF"
 
-    dto = ConfigDto.model_validate({
-        "mqtt_sink": MqttSinkDto.model_validate({
+    dto = ConfigDto.parse_obj({
+        "mqtt_sink": MqttSinkDto.parse_obj({
             "host": cfg_with_ca['sink0']["host"],
             "tls": True,
             "ca_cert": TEST_CA,

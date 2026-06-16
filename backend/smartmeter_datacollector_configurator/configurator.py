@@ -18,7 +18,7 @@ def retrieve_config(config_dir: str) -> ConfigDto:
     dto = ConfigDto()
     for sec in parser.sections():
         if sec.startswith("reader"):
-            dto.meters.append(MeterDto.model_validate(
+            dto.meters.append(MeterDto.parse_obj(
                 dict(parser.items(sec))
             ))
         elif sec.startswith("sink"):
@@ -27,14 +27,14 @@ def retrieve_config(config_dir: str) -> ConfigDto:
                 LOGGER.warning("Type of sink not defined. Ignored.")
                 continue
             if sink_dict["type"] == SinkType.MQTT:
-                dto.mqtt_sink = MqttSinkDto.model_validate(sink_dict)
+                dto.mqtt_sink = MqttSinkDto.parse_obj(sink_dict)
                 if "ca_file_path" in sink_dict:
                     try:
                         dto.mqtt_sink.ca_cert = _read_txt_file(f"{config_dir}/{CA_FILE_NAME}")
                     except OSError as ex:
                         LOGGER.warning("Unable to read CA certificate file. '%s'", str(ex))
             elif sink_dict["type"] == SinkType.LOGGER:
-                dto.logger_sink = LoggerSinkDto.model_validate(sink_dict)
+                dto.logger_sink = LoggerSinkDto.parse_obj(sink_dict)
         elif sec == "logging":
             dto.log_level = parser.get(sec, "default", fallback="WARNING")
     return dto
@@ -45,14 +45,14 @@ def write_config_from_dto(config_dir: str, config: ConfigDto) -> None:
     for i, meter in enumerate(config.meters):
         sec_name = f"reader{i}"
         parser.add_section(sec_name)
-        parser[sec_name] = meter.model_dump(exclude_none=True)
+        parser[sec_name] = meter.dict(exclude_none=True)
     sinks = (config.mqtt_sink, config.logger_sink)
     for i, sink in enumerate(sinks):
         if not sink:
             continue
         sec_name = f"sink{i}"
         parser.add_section(sec_name)
-        sec_dict = sink.model_dump(exclude={"ca_cert"}, exclude_none=True)
+        sec_dict = sink.dict(exclude={"ca_cert"}, exclude_none=True)
         parser[sec_name] = sec_dict
 
         # Handle CA certificate file

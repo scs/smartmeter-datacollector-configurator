@@ -1,8 +1,9 @@
 from enum import Enum
-from typing import List, Literal, Optional
+from typing import List, Literal, Optional, Union
 
 from pydantic import BaseModel as PydanticBaseModel
-from pydantic import ConfigDict, Field, ValidationInfo, field_validator
+from pydantic import Field
+from pydantic.class_validators import validator
 
 LOGGER_LEVEL = ["DEBUG", "INFO", "WARNING", "ERROR", "FATAL", "CRITICAL"]
 
@@ -23,7 +24,9 @@ class SinkType(str, Enum):
 
 class BaseModel(PydanticBaseModel):
     # pylint: disable=too-few-public-methods
-    model_config = ConfigDict(str_strip_whitespace=True, use_enum_values=True)
+    class Config:
+        anystr_strip_whitespace = True
+        use_enum_values = True
 
 
 class MeterDto(BaseModel):
@@ -31,7 +34,7 @@ class MeterDto(BaseModel):
     port: str
     key: Optional[str] = None
 
-    @field_validator("port")
+    @validator("port")
     @classmethod
     def port_not_empty(cls, val: str):
         if not val.strip():
@@ -50,28 +53,28 @@ class MqttSinkDto(BaseModel):
     username: Optional[str] = None
     topic_group: Optional[str] = None
 
-    @field_validator("host")
+    @validator("host")
     @classmethod
     def host_not_empty(cls, val: str):
         if not val:
             raise ValueError("MQTT host must not be empty.")
         return val
 
-    @field_validator("port")
+    @validator("port")
     @classmethod
     def port_valid_range(cls, val: int):
         if val <= 0 or val > 65535:
             raise ValueError(f"Invalid MQTT sink port {val}.")
         return val
 
-    @field_validator("username")
+    @validator("username")
     @classmethod
-    def username_password_exists(cls, val: Optional[str], info: ValidationInfo):
-        if val and not info.data.get("password"):
+    def username_password_exists(cls, val: str, values):
+        if val and not values["password"]:
             raise ValueError("No password set for username.")
         return val
 
-    @field_validator("topic_group")
+    @validator("topic_group")
     @classmethod
     def topic_group_is_alpha_num(cls, val: Optional[str]):
         if val and not val.isalnum():
@@ -80,10 +83,10 @@ class MqttSinkDto(BaseModel):
 
 
 class LoggerSinkDto(BaseModel):
-    type: Literal[SinkType.LOGGER] = SinkType.LOGGER
+    type: SinkType = Field(default=SinkType.LOGGER, const=True)
     name: str = "DataLogger"
 
-    @field_validator("name")
+    @validator("name")
     @classmethod
     def name_not_empty(cls, val: str):
         if not val.strip():
@@ -93,11 +96,11 @@ class LoggerSinkDto(BaseModel):
 
 class ConfigDto(BaseModel):
     log_level: str = "WARNING"
-    meters: List[MeterDto] = Field(default_factory=list)
+    meters: List[MeterDto] = []
     mqtt_sink: Optional[MqttSinkDto] = None
     logger_sink: Optional[LoggerSinkDto] = None
 
-    @field_validator("log_level")
+    @validator("log_level")
     @classmethod
     def log_level_valid(cls, val: str):
         lvl = val.strip().upper()
@@ -109,7 +112,7 @@ class ConfigDto(BaseModel):
 class CredentialsDto(BaseModel):
     password: str
 
-    @field_validator("password")
+    @validator("password")
     @classmethod
     def password_valid(cls, val: str):
         pwd = val.strip()

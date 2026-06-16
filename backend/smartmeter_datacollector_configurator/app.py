@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Optional
 
 import uvicorn
-from pydantic import ValidationError
+from pydantic.error_wrappers import ValidationError
 from starlette.applications import Starlette
 from starlette.authentication import requires
 from starlette.endpoints import HTTPEndpoint
@@ -34,12 +34,12 @@ class Configuration(HTTPEndpoint):
     @requires("authenticated")
     async def get(self, request):
         dto = configurator.retrieve_config(request.app.state.config_path)
-        return JSONResponse(dto.model_dump(mode="json"))
+        return JSONResponse(dto.json())
 
     @requires("authenticated")
     async def post(self, request: Request):
         try:
-            config = ConfigDto.model_validate(await request.json())
+            config = ConfigDto.parse_obj(await request.json())
         except ValidationError as ex:
             LOGGER.warning("Validation failure: '%s'", ex)
             raise HTTPException(status_code=400, detail="Validation of configuration failed.") from ex
