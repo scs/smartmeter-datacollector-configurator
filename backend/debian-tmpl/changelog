@@ -1,3 +1,15 @@
+smartmeter-datacollector-configurator (2.0.0-1) unstable; urgency=low
+
+  * frontend: upgrade to Vue 3 with Vite; upgrade to node 22 (LTS)
+  * frontend: replace axios with native fetch API
+  * frontend: update all dependencies to latest major versions
+  * frontend: add VSE RL-DSP standardization checkbox and topic group field
+  * backend: add new MQTT sink type 'mqttrldsp' with topic_group field
+  * backend: set default Python version to 3.13 (debian trixie)
+  * backend: update Python dependencies
+
+ -- Supercomputing Systems AG <info@scs.ch>  Sun, 16 Jun 2026 15:03:00 +0200
+
 smartmeter-datacollector-configurator (1.3.0-1) unstable; urgency=low
 
   * migrate to Poetry
