@@ -2,7 +2,7 @@
   <div class="block box">
     <p class="level title is-5">
       <span class="level-left">Logger Sink</span>
-      <b-icon class="level-right" type="is-danger" icon="trash" @click.native.stop="$emit('remove')" />
+      <b-icon class="level-right" type="is-danger" icon="trash" @click.stop="$emit('remove')" />
     </p>
     <p>Logs data to console.</p>
   </div>

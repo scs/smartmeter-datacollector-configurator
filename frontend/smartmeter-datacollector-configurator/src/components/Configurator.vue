@@ -6,30 +6,26 @@
           class="level-item"
           icon-left="upload"
           @click="checkCredentials(confirmLoad)"
-          label="Load Configuration"
-        />
+          label="Load Configuration" />
         <b-tooltip label="Deploy configuration and restart data collector">
           <b-button
             class="level-item"
             icon-left="download"
             @click="checkCredentials(confirmDeploy)"
-            label="Deploy Configuration"
-          />
+            label="Deploy Configuration" />
         </b-tooltip>
         <b-button
           class="level-item"
           icon-left="sync-alt"
           @click="checkCredentials(restartDatacollector)"
-          label="Restart Data Collector"
-        />
+          label="Restart Data Collector" />
         <b-button class="level-item" icon-left="sync-alt" @click="checkCredentials(restartDemo)" label="Restart Demo" />
         <b-tooltip label="Set new configurator password">
           <b-button
             class="level-item"
             icon-left="key"
             @click="checkCredentials(changePasswordModal, 'Please enter current configurator password.')"
-            label="Change Password"
-          />
+            label="Change Password" />
         </b-tooltip>
       </div>
       <div class="level-right">
@@ -59,8 +55,7 @@
           :key="r.id"
           :initConfig="r.config"
           @remove="removeMeter(r_i)"
-          @update="updateMeter(r_i, $event)"
-        />
+          @update="updateMeter(r_i, $event)" />
       </div>
       <div class="column">
         <p class="title is-4">Data Sinks</p>
@@ -74,8 +69,7 @@
           v-if="loggerSink"
           :initConfig="loggerSink"
           @update="loggerSink = $event"
-          @remove="loggerSink = null"
-        />
+          @remove="loggerSink = null" />
         <mqtt-sink v-if="mqttSink" :initConfig="mqttSink" @update="mqttSink = $event" @remove="mqttSink = null" />
       </div>
     </div>
@@ -83,8 +77,7 @@
 </template>
 
 <script>
-import axios from "axios";
-import { getApiUrl } from "../utils";
+import { getConfig, postConfig, restartDatacollector, restartDemo, changePassword } from "../api";
 import LoggerSink from "./LoggerSink.vue";
 import MqttSink from "./MqttSink.vue";
 import SmartMeter from "./SmartMeter.vue";
@@ -186,26 +179,20 @@ export default {
       });
     },
     parseError(error) {
-      if (error.response) {
-        if (error.response.status === 403) {
+      if (error.isResponse) {
+        if (error.status === 403) {
           this.credentials = null;
           return "Authentication failed.";
         }
-        return error.response.data || error.response.statusText;
+        return error.data || error.message;
       } else {
-        console.log(error.request);
         return "Request failed.";
       }
     },
     loadConfig() {
-      axios
-        .get(`${getApiUrl()}/config`, {
-          timeout: 3000,
-          responseType: "json",
-          auth: this.getAuthentication(),
-        })
-        .then((response) => {
-          this.extractConfig(response.data);
+      getConfig(this.getAuthentication())
+        .then((config) => {
+          this.extractConfig(config);
         })
         .catch((error) => {
           const message = this.parseError(error);
@@ -219,11 +206,7 @@ export default {
     },
     deployConfig() {
       const configJson = JSON.stringify(this.packConfig());
-      axios
-        .post(`${getApiUrl()}/config`, configJson, {
-          timeout: 4000,
-          auth: this.getAuthentication(),
-        })
+      postConfig(configJson, this.getAuthentication())
         .then(() => {
           this.$buefy.toast.open({
             message: "Configuration successfully deployed.",
@@ -246,11 +229,7 @@ export default {
         });
     },
     restartDatacollector() {
-      axios
-        .post(`${getApiUrl()}/restart`, null, {
-          timeout: 6000,
-          auth: this.getAuthentication(),
-        })
+      restartDatacollector(this.getAuthentication())
         .then(() => {
           this.$buefy.toast.open({
             message: "Data Collector successfully restarted.",
@@ -270,11 +249,7 @@ export default {
         });
     },
     restartDemo() {
-      axios
-        .post(`${getApiUrl()}/restart-demo`, null, {
-          timeout: 8000,
-          auth: this.getAuthentication(),
-        })
+      restartDemo(this.getAuthentication())
         .then(() => {
           this.$buefy.toast.open({
             message: "Demo successfully restarted.",
@@ -295,7 +270,7 @@ export default {
     },
     extractConfig(cfg) {
       if (typeof cfg === "string") {
-        // if not already parsed by axios
+        // if not already parsed as JSON
         cfg = JSON.parse(cfg);
       }
       this.loggerLevel = cfg["log_level"] || "WARNING";
@@ -315,18 +290,13 @@ export default {
     },
     changePasswordModal() {
       this.$buefy.modal.open({
-        parent: this,
         component: PasswordModal,
         hasModalCard: true,
         events: { submit: this.changePassword },
       });
     },
     changePassword(newPassword) {
-      axios
-        .post(`${getApiUrl()}/credentials`, newPassword, {
-          timeout: 4000,
-          auth: this.getAuthentication(),
-        })
+      changePassword(newPassword, this.getAuthentication())
         .then(() => {
           this.$buefy.toast.open({
             message: "Password successfully changed.",
