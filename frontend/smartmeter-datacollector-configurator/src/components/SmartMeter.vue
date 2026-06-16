@@ -19,7 +19,7 @@
       <b-button icon-right="sync-alt" @click="loadPorts" />
     </b-field>
     <b-field>
-      <b-checkbox v-model="customPort" :value="false">Enter custom port</b-checkbox>
+      <b-checkbox v-model="customPort">Enter custom port</b-checkbox>
     </b-field>
     <b-field label-position="inside" label="Decryption Key (optional)">
       <b-input v-model="key" type="text" lazy @input="update"></b-input>
