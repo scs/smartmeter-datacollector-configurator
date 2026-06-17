@@ -250,9 +250,9 @@ export default {
     },
     restartDemo() {
       restartDemo(this.getAuthentication())
-        .then(() => {
+        .then((msg) => {
           this.$buefy.toast.open({
-            message: "Demo successfully restarted.",
+            message: msg,
             type: "is-success",
             position: "is-top",
             duration: 4000,
