@@ -67,13 +67,14 @@ async def restart_datacollector(request):
 @requires("authenticated")
 async def restart_demo(request):
     # pylint: disable=unused-argument
-    try:
-        not_installed_services = await system.restart_demo()
-    except (system.NoPermissionError, system.GeneralSystemError) as ex:
-        raise HTTPException(status_code=503, detail=str(ex)) from ex
-    if len(not_installed_services) > 0:
-        raise HTTPException(status_code=503, detail=f"{str(not_installed_services)} are not installed.")
-    return PlainTextResponse()
+    installed_services = await system.get_installed_demo_services()
+    if not installed_services:
+        raise HTTPException(status_code=503, detail="No demo services are installed.")
+
+    if await system.trigger_demo_restart(installed_services):
+        return PlainTextResponse(content="Trying to restart following demo services: " + ", ".join(installed_services))
+
+    raise HTTPException(status_code=503, detail="Demo restart already in progress. Please wait until it is finished.")
 
 
 @requires("authenticated")
