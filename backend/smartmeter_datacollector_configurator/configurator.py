@@ -26,7 +26,7 @@ def retrieve_config(config_dir: str) -> ConfigDto:
             if "type" not in sink_dict:
                 LOGGER.warning("Type of sink not defined. Ignored.")
                 continue
-            if sink_dict["type"] == SinkType.MQTT:
+            if sink_dict["type"] in [SinkType.MQTT, SinkType.MQTT_RLDSP]:
                 dto.mqtt_sink = MqttSinkDto.parse_obj(sink_dict)
                 if "ca_file_path" in sink_dict:
                     try:
